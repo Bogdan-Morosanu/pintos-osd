@@ -144,4 +144,8 @@ void thread_set_nice (int);
 int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
 
+extern struct thread *idle_thread;
+
+struct thread *running_thread(void);
+
 #endif /* threads/thread.h */

@@ -15,6 +15,8 @@ void ready_list_prio_init(void);
 
 void ready_list_insert(struct thread *t);
 
+void ready_list_push_back(struct thread *t);
+
 struct thread *next_thread_to_run();
 
 struct thread *highest_prio_waiter(struct list *l);

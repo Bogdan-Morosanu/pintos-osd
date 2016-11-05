@@ -312,26 +312,6 @@ list_empty (struct list *list)
   return list_begin (list) == list_end (list);
 }
 
-/* Returns true if LIST contains ELEM, false otherwise
- * @author moro
- * @warning not tested */
-bool
-list_contains (struct list *list, struct list_elem *elem)
-{
-    ASSERT (list != NULL && elem != NULL)
-
-    for (struct list_elem *e = list_begin(list);
-         e != list_end(list); e = list_next(e)) {
-
-        if (e == elem) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-
 /* Swaps the `struct list_elem *'s that A and B point to. */
 static void
 swap (struct list_elem **a, struct list_elem **b) 

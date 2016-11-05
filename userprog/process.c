@@ -88,11 +88,7 @@ start_process (void *file_name_)
 int
 process_wait (tid_t child_tid UNUSED) 
 {
-  // UTCN
-  while(1);
-
-  // orifinal
-  //return -1;
+  return -1;
 }
 
 /* Free the current process's resources. */
@@ -440,12 +436,9 @@ setup_stack (void **esp)
   if (kpage != NULL) 
     {
       success = install_page (((uint8_t *) PHYS_BASE) - PGSIZE, kpage, true);
-      if (success) {
-	// UTCN
-	*esp = PHYS_BASE - 12;
-        //original
-        //*esp = PHYS_BASE;
-      } else
+      if (success)
+        *esp = PHYS_BASE;
+      else
         palloc_free_page (kpage);
     }
   return success;
