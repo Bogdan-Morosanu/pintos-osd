@@ -99,6 +99,15 @@ struct thread
     /* Owned by moro-threads.c */
     int64_t wakeup_time;
 
+    /* Owned by moro-donation.c */
+    int original_prio;
+
+    /* Owned by moro-donation.c */
+    struct list prio_history;
+
+    /* Owned by moro-donation.c */
+    struct lock *wait_on;
+
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
     uint32_t *pagedir;                  /* Page directory. */

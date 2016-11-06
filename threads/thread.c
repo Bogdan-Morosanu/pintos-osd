@@ -13,6 +13,7 @@
 #include "threads/vaddr.h"
 #include "threads/moro-threads.h"
 #include "threads/carmina-priolist.h"
+#include "threads/moro-donation.h"
 
 #ifdef USERPROG
 #include "userprog/process.h"
@@ -113,6 +114,9 @@ void thread_start(void) {
 
 	/* Wait for the idle thread to initialize idle_thread. */
 	sema_down(&idle_started);
+
+    /* Setup a threads structure for the sleep waker thread */
+    thread_create("waker thread", PRI_DEFAULT, thread_wake, NULL);
 }
 
 /* Called by the timer interrupt handler at each timer tick.
@@ -156,8 +160,10 @@ void thread_print_stats(void) {
  The code provided sets the new thread's `priority' member to
  PRIORITY, but no actual priority scheduling is implemented.
  Priority scheduling is the goal of Problem 1-3. */
-tid_t thread_create(const char *name, int priority, thread_func *function,
-		void *aux) {
+tid_t
+thread_create(const char *name, int priority, thread_func *function,
+              void *aux)
+{
 	struct thread *t;
 	struct kernel_thread_frame *kf;
 	struct switch_entry_frame *ef;
@@ -213,7 +219,8 @@ tid_t thread_create(const char *name, int priority, thread_func *function,
  This function must be called with interrupts turned off.  It
  is usually a better idea to use one of the synchronization
  primitives in synch.h. */
-void thread_block(void) {
+void thread_block(void)
+{
 	ASSERT(!intr_context());
 	ASSERT(intr_get_level() == INTR_OFF);
 
@@ -229,7 +236,8 @@ void thread_block(void) {
  be important: if the caller had disabled interrupts itself,
  it may expect that it can atomically unblock a thread and
  update other data. */
-void thread_unblock(struct thread *t) {
+void thread_unblock(struct thread *t)
+{
 	enum intr_level old_level;
 
 	ASSERT(is_thread(t));
@@ -244,7 +252,8 @@ void thread_unblock(struct thread *t) {
 
 /* Returns the name of the running thread. */
 const char *
-thread_name(void) {
+thread_name(void)
+{
 	return thread_current()->name;
 }
 
@@ -324,8 +333,13 @@ void thread_foreach(thread_action_func *func, void *aux) {
 
 /* Sets the current thread's priority to NEW_PRIORITY. */
 void thread_set_priority(int new_priority) {
-	int old_priority = thread_current()->priority;
-	thread_current()->priority = new_priority;
+
+    struct thread *t = thread_current();
+    int old_priority = t->priority;
+
+    t->original_prio = new_priority;
+    prio_update(t);
+
 	if (new_priority < old_priority)
 		thread_yield();
 }
@@ -433,6 +447,10 @@ static void init_thread(struct thread *t, const char *name, int priority) {
 	t->stack = (uint8_t *) t + PGSIZE;
 	t->priority = priority;
 	t->magic = THREAD_MAGIC;
+
+	t->original_prio = t->priority;
+    list_init(&t->prio_history);
+    t->wait_on = NULL;
 
 	list_push_back(&all_list, &t->allelem);
 }

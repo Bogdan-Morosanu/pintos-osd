@@ -31,6 +31,12 @@
 #include <string.h>
 #include "threads/interrupt.h"
 #include "threads/thread.h"
+#include "threads/carmina-priolist.h"
+#include "threads/moro-donation.h"
+
+static bool prio_condvar_cmp(const struct list_elem *a,
+                             const struct list_elem *b,
+                             void *aux UNUSED);
 
 /* Initializes semaphore SEMA to VALUE.  A semaphore is a
    nonnegative integer along with two atomic operators for
@@ -204,7 +210,15 @@ lock_acquire (struct lock *lock)
   ASSERT (!intr_context ());
   ASSERT (!lock_held_by_current_thread (lock));
 
+  if (NULL != lock->holder) {
+      prio_donate(lock);
+  }
+
+  struct thread *t = thread_current();
+  t->wait_on = lock;
   sema_down (&lock->semaphore);
+  t->wait_on = NULL;
+
   lock->holder = thread_current ();
 }
 
@@ -239,6 +253,7 @@ lock_release (struct lock *lock)
   ASSERT (lock != NULL);
   ASSERT (lock_held_by_current_thread (lock));
 
+  prio_rollback(lock);
   lock->holder = NULL;
   sema_up (&lock->semaphore);
 }
@@ -316,9 +331,9 @@ cond_wait (struct condition *cond, struct lock *lock)
  * Compares two threads based on their priority
  * Returns true if the first thread has lower priority
  */
-bool prio_condvar_cmp(const struct list_elem *a,
-                      const struct list_elem *b,
-                      void *aux UNUSED) {
+static bool prio_condvar_cmp(const struct list_elem *a,
+                             const struct list_elem *b,
+                             void *aux UNUSED) {
 
 	struct semaphore_elem *se_a = list_entry (a, struct semaphore_elem, elem);
 	struct semaphore_elem *se_b = list_entry (b, struct semaphore_elem, elem);

@@ -100,9 +100,6 @@ main (void)
   malloc_init ();
   paging_init ();
 
-  /* Setup a threads structure for the sleep waker thread */
-  tid_t waker_tid = thread_create("waker thread", PRI_DEFAULT, thread_wake, NULL);
-
   /* Segmentation. */
 #ifdef USERPROG
   tss_init ();

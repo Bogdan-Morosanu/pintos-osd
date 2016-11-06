@@ -7,6 +7,10 @@
 
 #include "carmina-priolist.h"
 
+static bool prio_cmp(const struct list_elem *a,
+                     const struct list_elem *b,
+                     void *aux UNUSED);
+
 struct list ready_list_prio[PRI_MAX+1];
 
 /**
@@ -46,9 +50,9 @@ struct thread *next_thread_to_run(){
  * Compares two threads based on their priority
  * Returns true if the first thread has lower priority
  */
-bool prio_cmp(const struct list_elem *a,
-              const struct list_elem *b,
-              void *aux UNUSED) {
+static bool prio_cmp(const struct list_elem *a,
+                     const struct list_elem *b,
+                     void *aux UNUSED) {
 
 	struct thread *t_a = list_entry (a, struct thread, elem);
 	struct thread *t_b = list_entry (b, struct thread, elem);
