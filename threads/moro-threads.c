@@ -17,7 +17,6 @@ thread_register_sleep(int64_t ticks)
 {
     if (ticks < 1) return;
     // TODO implement lock for modifying sleep ls !!
-    printf("thread %s called wait for %d\n", thread_current()->name, (int)ticks);
 
     enum intr_level old_level = intr_disable();
 
