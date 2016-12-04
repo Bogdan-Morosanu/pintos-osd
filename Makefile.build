@@ -25,6 +25,8 @@ threads_SRC += threads/malloc.c		# Subpage allocator.
 threads_SRC += threads/moro-threads.c
 threads_SRC += threads/carmina-priolist.c
 threads_SRC += threads/moro-donation.c
+# assignmnet two code
+userprog_SRC += userprog/carmina-syscalls-files.c
 
 # Device driver code.
 devices_SRC  = devices/pit.c		# Programmable interrupt timer chip.

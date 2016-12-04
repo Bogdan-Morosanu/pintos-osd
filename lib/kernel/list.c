@@ -522,3 +522,19 @@ list_min (struct list *list, list_less_func *less, void *aux)
     }
   return min;
 }
+
+
+/* Returns the first element in LIST with for which pred(list, aux) is true. */
+struct list_elem *
+list_find (struct list *list, list_pred_func *pred, void *aux)
+{
+  struct list_elem *retval = list_end(list);
+
+  struct list_elem *e;
+
+  for (e = list_begin(list); e != list_end (list); e = list_next (e))
+	if (pred(e, aux))
+	  return e;
+
+  return retval;
+}

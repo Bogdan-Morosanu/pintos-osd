@@ -3,6 +3,14 @@
 
 #include <stddef.h>
 
+
+/* Added by Carmina. Taken from stdlib.h from ubuntu */
+
+/* We define these the same for all machines.
+   Changes from this to the outside world should be done in `_exit'.  */
+#define	EXIT_FAILURE	1	/* Failing exit status.  */
+#define	EXIT_SUCCESS	0	/* Successful exit status.  */
+
 /* Standard functions. */
 int atoi (const char *);
 void qsort (void *array, size_t cnt, size_t size,

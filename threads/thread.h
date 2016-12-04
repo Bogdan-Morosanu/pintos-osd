@@ -115,6 +115,10 @@ struct thread
 
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
+
+    /* Owned by moro-syscalls-process.c
+     *  NULL for kernel threads */
+    struct proc_desc *pd;	
   };
 
 /* If false (default), use round-robin scheduler.
