@@ -66,6 +66,10 @@ static void
 start_process (void *vptr_pd)
 {
     struct proc_desc *pd = (struct proc_desc *)vptr_pd;
+
+    struct thread *cnt_thread = thread_current();
+    cnt_thread->pd = pd;
+
     char *file_name = pd->cmd_line;
     struct intr_frame if_;
     bool success;
