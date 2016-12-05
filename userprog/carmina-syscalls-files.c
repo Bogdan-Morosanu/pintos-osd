@@ -13,18 +13,6 @@
 
 #include <lib/stdlib.h>
 
-/// stub TODO delete me
-int validate_read_string(const char *str)
-{
-
-}
-
-/// stub TODO delete me
-void exit_handler(int ret_sts)
-{
-
-}
-
 int handle_open(const char *name)
 {
 	if(!validate_read_string(name)){

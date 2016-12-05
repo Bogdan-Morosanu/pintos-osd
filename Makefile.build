@@ -67,7 +67,10 @@ userprog_SRC += userprog/tss.c		# TSS management.
 
 # assignmnet two code
 userprog_SRC += userprog/carmina-syscalls-files.c
-
+userprog_SRC += userprog/moro-syscalls-process.c
+userprog_SRC += userprog/moro-validate.c
+userprog_SRC += userprog/moro-parse-args.c
+userprog_SRC += userprog/commons-process.c
 
 # No virtual memory code yet.
 #vm_SRC = vm/file.c			# Some file.

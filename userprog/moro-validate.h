@@ -8,6 +8,9 @@
 #ifndef SRC_USERPROG_MORO_SANITIZE_H_
 #define SRC_USERPROG_MORO_SANITIZE_H_
 
+#include <stdlib.h>
+#include <stddef.h>
+
 int validate_read_addr(const void *addr, size_t size);
 
 int validate_write_addr(void *addr, size_t size);
