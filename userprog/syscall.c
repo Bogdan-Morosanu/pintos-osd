@@ -13,7 +13,7 @@ syscall_init (void)
 }
 
 static void
-syscall_handler (struct intr_frame *f UNUSED) 
+syscall_handler (struct intr_frame *f)
 {
   	int syscall_no = *((int*)f->esp);
 
@@ -21,6 +21,13 @@ syscall_handler (struct intr_frame *f UNUSED)
 
 
 	switch (syscall_no) {
+	    case SYS_EXEC:
+            {
+                char *cmd_line = *(char**)(((char*)f->esp) + sizeof(int));
+                f->eax = process_execute(cmd_line);
+            }
+	        break;
+
 		case SYS_EXIT:
 			printf ("SYS_EXIT system call!\n");
 			thread_exit();

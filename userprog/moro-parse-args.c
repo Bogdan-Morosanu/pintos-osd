@@ -144,7 +144,7 @@ void *parse_args(const char *args, void *where)
 
     } while (*src++);
 
-    dst_ptr = NULL; // sentinel value
+    *dst_ptr = NULL; // sentinel value
     // here dst_char == where should be true
 
     // now we will just copy over argv, argc and *argv

@@ -37,6 +37,7 @@ new_proc_desc(const char *command_line)
     sema_init(&pd->wait_create, 0);
 
     pd->parent = thread_current();
+    pd->current = NULL; // will be populated in start_process
 
     list_init(&pd->opened_files);
     pd->next_file_id = 2; // (leave room for STDIN and STDOUT, no STDERR in pintos)

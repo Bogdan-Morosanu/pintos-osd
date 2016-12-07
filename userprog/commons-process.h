@@ -22,7 +22,7 @@ struct proc_desc {
 
 	enum proc_state state;		    // current state
 
-	const char *cmd_line; 				// path to elf being executed
+	const char *cmd_line; 		    // path to elf being executed
 
 	struct list child_processes;	// list of processes created by this one
 
@@ -33,6 +33,8 @@ struct proc_desc {
 	int ret_sts; 					// return status; invalid if state != PROCESS_ZOMBIE
 
 	struct semaphore wait_create;	// used for wait create
+
+	struct thread *current;         // pointer to current thread
 
 	struct thread *parent;		    // pointer to parent thread
 

@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
+
 #include "userprog/gdt.h"
 #include "userprog/pagedir.h"
 #include "userprog/tss.h"
@@ -25,40 +27,72 @@
 static thread_func start_process NO_RETURN;
 static bool load (const char *cmdline, void (**eip) (void), void **esp);
 
-
+/// holds in list all processes started by kernel or which have been orphaned.
+static struct list GLOBAL_PROCESSES = LIST_INITIALIZER(GLOBAL_PROCESSES);
 
 /* Starts a new thread running a user program loaded from
    FILENAME.  The new thread may be scheduled (and may even exit)
    before process_execute() returns.  Returns the new process's
    thread id, or TID_ERROR if the thread cannot be created. */
 tid_t
-process_execute (const char *file_name) 
+process_execute (const char *cmd_line) 
 {
     char *fn_copy;
     tid_t tid;
-
+    printf("executing %s\n", cmd_line);
     /* Make a copy of FILE_NAME.
      Otherwise there's a race between the caller and load(). */
     fn_copy = palloc_get_page (0);
     if (fn_copy == NULL)
         return TID_ERROR;
-    strlcpy (fn_copy, file_name, PGSIZE);
+    strlcpy (fn_copy, cmd_line, PGSIZE);
 
     /* it is important to create the process descriptor
      * while still in the parent in order to link the new threads
      */
     struct proc_desc *pd = new_proc_desc(fn_copy);
+    struct proc_dest *cnt_proc = thread_current()->pd;
+    if (cnt_proc) {
+        list_push_back(&cnt_proc->child_processes, &pd->elem);
+
+    } else {
+        list_push_back(&GLOBAL_PROCESSES, &pd->elem);
+    }
 
     /* Create a new thread to execute FILE_NAME. */
-    tid = thread_create (file_name, PRI_DEFAULT, start_process, pd);
+    tid = thread_create (cmd_line, PRI_DEFAULT, start_process, pd);
 
     /* now wait for creation to actually complete execution */
     sema_down(&pd->wait_create);
+
+    printf("process started!");
 
     if (tid == TID_ERROR)
         palloc_free_page (fn_copy);
     return tid;
 }
+
+
+static char *
+allocate_elf_name(char *str)
+{
+    char *file_name_end = str;
+    while (*file_name_end && !isspace(*file_name_end++));
+
+    if (isspace(*(file_name_end - 1))) {
+        file_name_end--;
+    }
+    size_t sz = file_name_end - str + 1; // +1 for the null terminator
+    char c = *file_name_end;
+    *file_name_end = '\0';
+
+    char *file_name = malloc(sz);
+    strlcpy(file_name, str, sz);
+    *file_name_end = c;
+    return file_name;
+}
+
+
 
 /* A thread function that loads a user process and starts it
    running. */
@@ -70,7 +104,11 @@ start_process (void *vptr_pd)
     struct thread *cnt_thread = thread_current();
     cnt_thread->pd = pd;
 
-    char *file_name = pd->cmd_line;
+    // get name of executable
+
+    char *file_name = allocate_elf_name(pd->cmd_line);
+    printf("elf name %s.\n", file_name);
+
     struct intr_frame if_;
     bool success;
 
@@ -85,10 +123,11 @@ start_process (void *vptr_pd)
      * added to support command line args, sets up argv and argc,
      * and then returns new esp
      */
-    if_.esp = parse_args(file_name, if_.esp);
+    if_.esp = parse_args(pd->cmd_line, if_.esp);
 
-    /* creation finished (with or without success), signal parent */
+    /* creation finished (with or without success), signal parent and cleanup */
     sema_up(&pd->wait_create);
+    free(file_name);
 
     /* If load failed, quit. */
     if (!success) {
@@ -107,6 +146,13 @@ start_process (void *vptr_pd)
     NOT_REACHED ();
 }
 
+bool list_pred_func (const struct list_elem *a,
+                     void *aux)
+{
+    tid_t tid = *(tid_t*)(aux);
+    return list_entry(a, struct proc_desc, elem)->tid == tid;
+}
+
 /* Waits for thread TID to die and returns its exit status.  If
    it was terminated by the kernel (i.e. killed due to an
    exception), returns -1.  If TID is invalid or if it was not a
@@ -119,6 +165,8 @@ start_process (void *vptr_pd)
 int
 process_wait (tid_t child_tid UNUSED) 
 {
+    // TODO implement
+    struct list_elem *ch = list_find
     return -1;
 }
 
