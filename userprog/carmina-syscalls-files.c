@@ -14,8 +14,15 @@
 #include <lib/stdlib.h>
 #include <lib/kernel/list.h>
 #include <lib/stdio.h>
+#include <lib/stdbool.h>
 
 
+/**
+ * Predicate used for finding in a list of files the one with
+ * fd equal to the one given
+ * @param a represents the struct list_elem in the user_file struct
+ * @param aux is used for passing the value of the fd to be searched for
+ */
 static bool fd_pred(const struct list_elem *a, void *aux){
 	int fd_find = * (int *) aux;
 	struct user_file *file =  list_entry (a, struct user_file, elem);
@@ -55,7 +62,7 @@ int handle_open(const char *name)
 }
 
 /**
- * Function used for handlng the close system call
+ * Function used for handling the close system call
  * @param fd represents the file descriptor
  */
 int handle_close(int fd){
@@ -79,6 +86,11 @@ int handle_close(int fd){
 	}
 }
 
+/**
+ * Function used for handling the seek system call
+ * @param fd represents the file dscriptor
+ * @param pos represents the position
+ */
 int handle_seek(int fd, int pos){
 	struct proc_desc *current_dsc = thread_current()->pd;
 	struct list_elem *e = list_find(&current_dsc->opened_files, fd_pred, &fd);
@@ -98,6 +110,10 @@ int handle_seek(int fd, int pos){
 		}
 }
 
+/**
+ * Function tell used for telling the current position in a file
+ * @param fd represents the file descriptor
+ */
 int handle_tell(int fd){
 	struct proc_desc *current_dsc = thread_current()->pd;
 	struct list_elem *e = list_find(&current_dsc->opened_files, fd_pred, &fd);
@@ -117,6 +133,13 @@ int handle_tell(int fd){
 	}
 }
 
+/**
+ * Function used for handling the write system call
+ * @param fd represents the file descriptor
+ * @param buf represents the buffer from where to get the data
+ * to be written
+ * @param size represents the size of the buffer
+ */
 int handle_write(int fd,char *buf,unsigned size){
 	//verify if STDOUT
 	if(fd == STDOUT_FILENO)
@@ -141,6 +164,12 @@ int handle_write(int fd,char *buf,unsigned size){
 	}
 }
 
+/**
+ * Function used for handling the read system call
+ * @param fd represents the file descriptor
+ * @param buf represents the buffer in which to write the read data
+ * @param size represents the size in bytes to be read
+ */
 int handle_read(int fd, char *buf, unsigned size){
 	struct proc_desc *current_dsc = thread_current()->pd;
 	struct list_elem *e = list_find(&current_dsc->opened_files, fd_pred, &fd);
@@ -160,8 +189,18 @@ int handle_read(int fd, char *buf, unsigned size){
 	}
 }
 
+/**
+ * Function used for handling the create system call
+ * @param file_name represents the name of the file
+ * @param initial_size represents the initial size of the file
+ */
+bool handle_create(char *file_name, unsigned initial_size){
 
-
+	sema_down(&fs_sema);
+	bool result = filesys_create(file_name, initial_size);
+	sema_up(&fs_sema);
+	return result;
+}
 
 
 

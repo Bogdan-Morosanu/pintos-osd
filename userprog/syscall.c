@@ -3,6 +3,7 @@
 #include <syscall-nr.h>
 #include "threads/interrupt.h"
 #include "threads/thread.h"
+#include <lib/stdbool.h>
 
 static void syscall_handler (struct intr_frame *);
 
@@ -39,7 +40,7 @@ syscall_handler (struct intr_frame *f UNUSED)
 				int fd = *(int *)((char *)f->esp + sizeof(int));
 				void *buf= *(void **)((char *)f->esp + 2*sizeof(int));
 				unsigned size= *(unsigned *)((char *)f->esp + 2*sizeof(int) + sizeof(void *));
-				int result= handle_write(fd, buf,size);
+				int result= handle_read(fd, buf,size);
 				f->eax=result;
 			}
 			break;
@@ -50,6 +51,15 @@ syscall_handler (struct intr_frame *f UNUSED)
 				int fd = handle_open(file_name);
 				f->eax = fd;
 		  	}
+			break;
+		case SYS_CREATE:
+			{
+			  	char **addr = (char **)(((char*)f->esp) + sizeof(int));
+				char *file_name = *addr;
+				unsigned initial_size= *(unsigned *)((char *)f->esp + sizeof(char *));
+				bool result = handle_create(file_name, initial_size);
+				f->eax = result;
+			}
 			break;
 		case SYS_SEEK:
 			{

@@ -35,10 +35,7 @@ filesys_init (bool format)
     do_format ();
 
   free_map_open ();
-  /**
-   * added by Carmina
-   */
-  sema_up(&fs_sema);
+
 }
 
 /* Shuts down the file system module, writing any unwritten data
@@ -56,7 +53,6 @@ filesys_done (void)
 bool
 filesys_create (const char *name, off_t initial_size) 
 {
-  sema_down(&fs_sema);
   block_sector_t inode_sector = 0;
   struct dir *dir = dir_open_root ();
   bool success = (dir != NULL
@@ -66,7 +62,6 @@ filesys_create (const char *name, off_t initial_size)
   if (!success && inode_sector != 0)
     free_map_release (inode_sector, 1);
   dir_close (dir);
-  sema_up(&fs_sema);
   return success;
 }
 
