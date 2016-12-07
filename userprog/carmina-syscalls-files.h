@@ -2,6 +2,7 @@
 #define CARMINA_SYSCALLSFILES_H
 
 #include <filesys/file.h>
+#include <filesys/filesys.h>
 #include <lib/kernel/list.h>
 #include "commons-process.h"
 

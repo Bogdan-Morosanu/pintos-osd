@@ -26,25 +26,51 @@ syscall_handler (struct intr_frame *f UNUSED)
 			thread_exit();
 			break;
 		case SYS_WRITE:
-			printf ("SYS_WRITE system call!\n");
-			f->eax=0;
+			{
+				int fd = *(int *)((char *)f->esp + sizeof(int));
+				void *buf= *(void **)((char *)f->esp + 2*sizeof(int));
+				unsigned size= *(unsigned *)((char *)f->esp + 2*sizeof(int) + sizeof(void *));
+				int result= handle_write(fd, buf,size);
+				f->eax=result;
+			}
 			break;
 		case SYS_READ:
-			printf ("SYS_READ system call!\n");
+			{
+				int fd = *(int *)((char *)f->esp + sizeof(int));
+				void *buf= *(void **)((char *)f->esp + 2*sizeof(int));
+				unsigned size= *(unsigned *)((char *)f->esp + 2*sizeof(int) + sizeof(void *));
+				int result= handle_write(fd, buf,size);
+				f->eax=result;
+			}
 			break;
 		case SYS_OPEN:
-		  {
-			char **addr = (char **)(((char*)f->esp) + sizeof(int));
-			char *file_name = *addr;
-			int fd = handle_open(file_name);
-			f->eax = fd;
-		  }
+		  	{
+			  	char **addr = (char **)(((char*)f->esp) + sizeof(int));
+				char *file_name = *addr;
+				int fd = handle_open(file_name);
+				f->eax = fd;
+		  	}
 			break;
 		case SYS_SEEK:
+			{
+				int fd = *(int *)((char *)f->esp + sizeof(int));
+				int pos = *(int *)((char *)f->esp + 2*sizeof(int));
+				int result = handle_seek(fd, pos);
+			}
 			break;
 		case SYS_TELL:
+			{
+				int fd = *(int *)((char *)f->esp + sizeof(int));
+				int res = handle_tell(fd);
+				f->eax=res;
+			}
 			break;
 		case SYS_CLOSE:
+			{
+				int fd = *(int *)((char *)f->esp + sizeof(int));
+				int result = handle_close(fd);
+				f->eax = result;
+			}
 			break;
 		}
 
