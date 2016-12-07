@@ -42,6 +42,8 @@ struct proc_desc {
 
 	int next_file_id;				// keeps the next file descriptor that is available
 
+	struct file *executing_file; 	//used for keeping the file that is being executed
+
 };
 
 /// @brief returns new process descriptor with parent set as
