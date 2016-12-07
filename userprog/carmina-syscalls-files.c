@@ -41,10 +41,16 @@ static bool fd_pred(const struct list_elem *a, void *aux){
  */
 int handle_open(const char *name)
 {
+	if (strlen(name) > MAX_FILE_NAME){
+		return -1;
+	}
 	if (!validate_read_string(name)) {
 		exit_handler(EXIT_FAILURE);
 	}
-
+	struct proc_desc *current_dsc = thread_current()->pd;
+	if (current_dsc->next_file_id > MAX_NO_OPENED_FILES){
+		return -1;
+	}
 	//protect filesys
 	sema_down(&fs_sema);
 	struct file *result = filesys_open(name);
@@ -54,7 +60,6 @@ int handle_open(const char *name)
 		return -1;
 	}
 	struct user_file *new_file = malloc(sizeof(*new_file));
-	struct proc_desc *current_dsc = thread_current()->pd;
 	new_file->f = result;
 	new_file->fd = current_dsc->next_file_id++;
 	list_push_back (&current_dsc->opened_files, &new_file->elem);
@@ -195,7 +200,9 @@ int handle_read(int fd, char *buf, unsigned size){
  * @param initial_size represents the initial size of the file
  */
 bool handle_create(char *file_name, unsigned initial_size){
-
+	if (strlen(file_name) > MAX_FILE_NAME){
+			return false;
+		}
 	sema_down(&fs_sema);
 	bool result = filesys_create(file_name, initial_size);
 	sema_up(&fs_sema);

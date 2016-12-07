@@ -107,6 +107,14 @@ start_process (void *vptr_pd)
     // get name of executable
 
     char *file_name = allocate_elf_name(pd->cmd_line);
+
+    /**
+     * Added by Carmina
+     * Open the file and keep it with write denied
+     */
+    pd->executing_file = filesys_open(file_name);
+    file_deny_write(pd->executing_file);
+
     printf("elf name %s.\n", file_name);
 
     struct intr_frame if_;
@@ -183,6 +191,14 @@ process_exit (void)
      * TODO implement return value caching and cleanup files and children
      */
     struct proc_desc *cnt_proc = cur->pd;
+
+    /**
+     * Added by Carmina
+     * Allow write on the file being executed close it
+     */
+    file_allow_write(cnt_proc->executing_file);
+    file_close(cnt_proc->executing_file);
+
     free_proc_desc(cnt_proc);
     cur->pd = NULL;
 

@@ -6,7 +6,7 @@
 #include <lib/kernel/list.h>
 #include "commons-process.h"
 
-#define MAX_FILE_NAME 15
+#define MAX_FILE_NAME 14
 #define MAX_NO_OPENED_FILES 32
 
 struct user_file{
