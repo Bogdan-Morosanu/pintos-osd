@@ -51,7 +51,7 @@ process_execute (const char *cmd_line)
      * while still in the parent in order to link the new threads
      */
     struct proc_desc *pd = new_proc_desc(fn_copy);
-    struct proc_dest *cnt_proc = thread_current()->pd;
+    struct proc_desc *cnt_proc = thread_current()->pd;
     if (cnt_proc) {
         list_push_back(&cnt_proc->child_processes, &pd->elem);
 
@@ -146,12 +146,13 @@ start_process (void *vptr_pd)
     NOT_REACHED ();
 }
 
-bool list_pred_func (const struct list_elem *a,
-                     void *aux)
-{
-    tid_t tid = *(tid_t*)(aux);
-    return list_entry(a, struct proc_desc, elem)->tid == tid;
-}
+// TODO implement
+//bool find_by_tid (const struct list_elem *a,
+//		  void *aux)
+//{
+//    tid_t tid = *(tid_t*)(aux);
+//    return list_entry(a, struct proc_desc, elem)->tid == tid;
+//}
 
 /* Waits for thread TID to die and returns its exit status.  If
    it was terminated by the kernel (i.e. killed due to an
@@ -166,7 +167,8 @@ int
 process_wait (tid_t child_tid UNUSED) 
 {
     // TODO implement
-    struct list_elem *ch = list_find
+    //    struct list_elem *ch = list_find
+    while (1) { } // 
     return -1;
 }
 
