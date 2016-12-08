@@ -109,6 +109,15 @@ start_process (void *vptr_pd)
     // get name of executable
     // cast away const, we are initialising the process, so this is ok
     char *file_name = allocate_elf_name((char *)(pd->cmd_line));
+
+    /**
+     * Added by Carmina
+     * Open the file and keep it with write denied
+     */
+    pd->executing_file = filesys_open(file_name);
+    file_deny_write(pd->executing_file);
+
+
     printf("elf name %s.\n", file_name);
 
     struct intr_frame if_;
@@ -224,6 +233,8 @@ process_exit (int ret_sts)
            thread_current()->pd->cmd_line, thread_current()->tid, ret_sts);
     /* ---- Process Descriptor Cleanup ---- */
     struct proc_desc *cnt_proc = cur->pd;
+
+    // signal exit to parent
     cnt_proc->ret_sts = ret_sts;
 
     printf("in process exit %s acquiring wait broadcast lock\n", cnt_proc->cmd_line);
@@ -237,6 +248,18 @@ process_exit (int ret_sts)
     lock_release(&(cnt_proc->wait_bcast_lock));
 
     printf("signaled exit to other threads!\n");
+
+
+    /**
+     * Added by Carmina
+     * Allow write on the file being executed close it
+     */
+    file_allow_write(cnt_proc->executing_file);
+    file_close(cnt_proc->executing_file);
+
+    free_proc_desc(cnt_proc);
+    cur->pd = NULL;
+
 
     /* ---- Page Directory Cleanup ---- */
     uint32_t *pd;
