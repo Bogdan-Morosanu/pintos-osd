@@ -20,7 +20,7 @@ struct Argcv {
 };
 
 /// helper function prints memory contents as pointers
-static void
+void
 dump_ptrs(void **from, void **to)
 {
     while (from != to) {
@@ -30,7 +30,7 @@ dump_ptrs(void **from, void **to)
 }
 
 /// helper function prints memory contents as in memory strings
-static void
+void
 dump_chars(void *from, void *to)
 {
     int start_string = 1;

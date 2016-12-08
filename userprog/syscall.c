@@ -7,6 +7,7 @@
 #include "userprog/carmina-syscalls-files.h"
 #include "userprog/moro-syscalls-process.h"
 #include "userprog/process.h"
+#include "userprog/moro-parse-args.h"
 
 static void syscall_handler (struct intr_frame *);
 
@@ -15,6 +16,18 @@ syscall_init (void)
 {
   intr_register_int (0x30, 3, INTR_ON, syscall_handler, "syscall");
 }
+
+struct write_args {
+    unsigned size;
+    void *buffer;
+    int fd;
+};
+
+struct read_args {
+    unsigned size;
+    void *buffer;
+    int fd;
+};
 
 static void
 syscall_handler (struct intr_frame *f)
@@ -48,20 +61,16 @@ syscall_handler (struct intr_frame *f)
 
   case SYS_WRITE:
     {
-      int fd = *(int *)((char *)f->esp + sizeof(int));
-      void *buf= *(void **)((char *)f->esp + 2*sizeof(int));
-      unsigned size= *(unsigned *)((char *)f->esp + 2*sizeof(int) + sizeof(void *));
-      int result= handle_write(fd, buf,size);
+      struct write_args *w = ((int*)f->esp)[1];
+      int result= handle_write(w->fd, w->buffer, w->size);
       f->eax=result;
     }
     break;
 
   case SYS_READ:
     {
-      int fd = *(int *)((char *)f->esp + sizeof(int));
-      void *buf= *(void **)((char *)f->esp + 2*sizeof(int));
-      unsigned size= *(unsigned *)((char *)f->esp + 2*sizeof(int) + sizeof(void *));
-      int result= handle_read(fd, buf,size);
+      struct read_args *r = ((int*)f->esp)[1];
+      int result= handle_read(r->fd, r->buffer, r->size);
       f->eax=result;
     }
     break;
@@ -70,6 +79,7 @@ syscall_handler (struct intr_frame *f)
     {
       char **addr = (char **)(((char*)f->esp) + sizeof(int));
       char *file_name = *addr;
+
       int fd = handle_open(file_name);
       printf("\nfd returned: %d\n\n", fd);
       f->eax = fd;

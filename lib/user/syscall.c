@@ -111,16 +111,31 @@ filesize (int fd)
   return syscall1 (SYS_FILESIZE, fd);
 }
 
+struct read_args {
+    unsigned size;
+    void *buffer;
+    int fd;
+};
+
 int
 read (int fd, void *buffer, unsigned size)
 {
-  return syscall3 (SYS_READ, fd, buffer, size);
+  struct read_args r = { size, buffer, fd };
+  return syscall1 (SYS_READ, &r);
 }
+
+struct write_args {
+    unsigned size;
+    void *buffer;
+    int fd;
+};
 
 int
 write (int fd, const void *buffer, unsigned size)
 {
-  return syscall3 (SYS_WRITE, fd, buffer, size);
+  struct write_args w = { size, buffer, fd };
+  return syscall1 (SYS_WRITE, &w);
+  //return syscall3 (SYS_WRITE, fd, buffer, size);
 }
 
 void

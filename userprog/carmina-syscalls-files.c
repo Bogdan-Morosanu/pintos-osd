@@ -147,14 +147,21 @@ int handle_tell(int fd){
  * @param size represents the size of the buffer
  */
 int handle_write(int fd,char *buf,unsigned size){
-	//verify if STDOUT
-	if(fd == STDOUT_FILENO)
+
+    printf("%s calling write on fd %d.\n", thread_current()->pd->cmd_line, fd);
+
+    //verify if STDOUT
+    if (fd == STDOUT_FILENO) {
 		sema_down(&fs_sema);
 		putbuf(buf,size);
 		sema_up(&fs_sema);
 		return size;
-	if (fd == STDIN_FILENO )
+	}
+
+	if (fd == STDIN_FILENO ) {
 		return -1;
+	}
+
 	struct proc_desc *current_dsc = thread_current()->pd;
 	struct list_elem *e = list_find(&current_dsc->opened_files, fd_pred, &fd);
 	if (e != list_end(&current_dsc->opened_files)){
