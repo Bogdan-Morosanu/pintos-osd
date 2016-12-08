@@ -27,6 +27,8 @@ struct proc_desc {
 
 	const char *cmd_line; 		    // command line string passed to exec
 
+        struct file *executing_file; // elf file being executed
+  
 	struct list child_processes;	// list of processes created by this one
 
 	struct condition wait_bcast;	// condition variable for processes waiting on this one
