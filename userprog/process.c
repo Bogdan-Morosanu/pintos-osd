@@ -257,10 +257,6 @@ process_exit (int ret_sts)
     file_allow_write(cnt_proc->executing_file);
     file_close(cnt_proc->executing_file);
 
-    free_proc_desc(cnt_proc);
-    cur->pd = NULL;
-
-
     /* ---- Page Directory Cleanup ---- */
     uint32_t *pd;
 
