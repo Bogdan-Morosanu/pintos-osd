@@ -105,6 +105,7 @@ int handle_seek(int fd, int pos){
 			//call seek on the file
 			//protect file
 			sema_down(&fs_sema);
+			printf("\nCalling syscall seek\n");
 			file_seek(file_found->f, pos);
 			sema_up(&fs_sema);
 			return 0;
@@ -112,6 +113,9 @@ int handle_seek(int fd, int pos){
 		else
 		{
 			//file descriptor not found
+			printf("\nNot ok seek\n");
+			printf("\nPos %d\n", pos);
+			printf("\nFd %d\n", fd);
 			return -1;
 		}
 }

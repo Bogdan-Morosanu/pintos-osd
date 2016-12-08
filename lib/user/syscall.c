@@ -138,10 +138,17 @@ write (int fd, const void *buffer, unsigned size)
   //return syscall3 (SYS_WRITE, fd, buffer, size);
 }
 
+struct seek_args {
+    unsigned position;
+    int fd;
+};
+
 void
 seek (int fd, unsigned position) 
 {
-  syscall2 (SYS_SEEK, fd, position);
+  struct seek_args s= {position, fd};
+  syscall1(SYS_SEEK, &s);
+  //syscall2 (SYS_SEEK, fd, position);
 }
 
 unsigned

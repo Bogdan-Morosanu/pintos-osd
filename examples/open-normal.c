@@ -7,9 +7,12 @@
 int
 main (int argc, char **argv) 
 {
-  /* int handle = open ("sample.txt"); */
-  /* if (handle < 2) */
-  /*   printf("noooot"); */
-  write(1, "oookkk", sizeof("oookkk"));
+  char buf[2];	
+  int handle = open ("sample.txt");
+  int readres = read(handle,buf,2);
+  seek(handle,10);
+  readres = read(handle, buf,2);
+  printf(buf);
+  
   exit(0);
 }
