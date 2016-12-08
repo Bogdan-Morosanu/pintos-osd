@@ -4,6 +4,8 @@
 #include "userprog/gdt.h"
 #include "threads/interrupt.h"
 #include "threads/thread.h"
+#include "threads/vaddr.h"
+#include "userprog/process.h"
 
 /* Number of page faults processed. */
 static long long page_fault_cnt;
@@ -89,7 +91,8 @@ kill (struct intr_frame *f)
       printf ("%s: dying due to interrupt %#04x (%s).\n",
               thread_name (), f->vec_no, intr_name (f->vec_no));
       intr_dump_frame (f);
-      thread_exit (); 
+      process_exit (-1);
+      break; // to please IDE
 
     case SEL_KCSEG:
       /* Kernel's code segment, which indicates a kernel bug.
@@ -98,6 +101,7 @@ kill (struct intr_frame *f)
          here.)  Panic the kernel to make the point.  */
       intr_dump_frame (f);
       PANIC ("Kernel bug - unexpected interrupt in kernel"); 
+      break; // to please IDE
 
     default:
       /* Some other code segment?  Shouldn't happen.  Panic the
@@ -151,11 +155,22 @@ page_fault (struct intr_frame *f)
   /* To implement virtual memory, delete the rest of the function
      body, and replace it with code that brings in the page to
      which fault_addr refers. */
+
+  // always fault the user
+  if (!user) {
+      if (fault_addr < PHYS_BASE) {
+          // userland address faulting the kernel, do not panic
+          f->eip = f->eax; // return to initial address
+          f->eax = ~0u; // set all bits in eax to mark page fault
+          return;
+      }
+  }
+
   printf ("Page fault at %p: %s error %s page in %s context.\n",
-          fault_addr,
-          not_present ? "not present" : "rights violation",
-          write ? "writing" : "reading",
-          user ? "user" : "kernel");
+                fault_addr,
+                not_present ? "not present" : "rights violation",
+                write ? "writing" : "reading",
+                user ? "user" : "kernel");
   kill (f);
 }
 
