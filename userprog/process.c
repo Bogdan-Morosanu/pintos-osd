@@ -29,7 +29,7 @@ static thread_func start_process NO_RETURN;
 static bool load (const char *cmdline, void (**eip) (void), void **esp);
 
 /// holds in list all processes started by kernel or which have been orphaned.
-static struct list GLOBAL_PROCESSES = LIST_INITIALIZER(GLOBAL_PROCESSES);
+struct list GLOBAL_PROCESSES = LIST_INITIALIZER(GLOBAL_PROCESSES);
 
 /* Starts a new thread running a user program loaded from
    FILENAME.  The new thread may be scheduled (and may even exit)
@@ -174,7 +174,6 @@ bool find_by_tid (const struct list_elem *a,
 int
 process_wait (tid_t child_tid)
 {
-
     // kernel threads can wait on the global process list
     struct list *ls = (NULL != thread_current()->pd) ?
                             &(thread_current()->pd->child_processes) :
@@ -210,6 +209,14 @@ process_exit (int ret_sts)
     /* ---- Process Descriptor Cleanup ---- */
     struct thread *cur = thread_current ();
     struct proc_desc *cnt_proc = cur->pd;
+
+    // move children to global process list
+    struct list *ch_ls = &cnt_proc->child_processes;
+    struct list_elem *e;
+    for (e = list_begin(ch_ls); e != list_end(ch_ls); e = list_next(e)) {
+        list_remove(e);
+        list_push_back(&GLOBAL_PROCESSES, e);
+    }
 
     // copy exit code and signal exit to parent
     lock_acquire(&(cnt_proc->wait_bcast_lock));
