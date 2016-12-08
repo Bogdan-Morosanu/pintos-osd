@@ -210,6 +210,15 @@ process_exit (int ret_sts)
     struct thread *cur = thread_current ();
     struct proc_desc *cnt_proc = cur->pd;
 
+    /* ---- Announce Kernel we are exiting ---- */
+    // allocate_elf_name places a NULL after our process name
+    // before calling strcpy, for efficiency reasons. (it then
+    // restores original state of the string). therefore we need
+    // to cast away const.
+    char *p_name = allocate_elf_name((char*)cnt_proc->cmd_line);
+    printf ("%s: exit(%d)\n", p_name, ret_sts);
+    free(p_name);
+
     // move children to global process list
     struct list *ch_ls = &cnt_proc->child_processes;
     struct list_elem *e;
