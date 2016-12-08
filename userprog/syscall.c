@@ -71,6 +71,7 @@ syscall_handler (struct intr_frame *f)
       char **addr = (char **)(((char*)f->esp) + sizeof(int));
       char *file_name = *addr;
       int fd = handle_open(file_name);
+      printf("\nfd returned: %d\n\n", fd);
       f->eax = fd;
     }
     break;

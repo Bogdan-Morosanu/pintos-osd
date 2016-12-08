@@ -36,6 +36,13 @@ filesys_init (bool format)
 
   free_map_open ();
 
+
+  /**
+   * Added by Carmina
+   * Give access to fiesys and file
+   */
+  sema_up(&fs_sema);
+
 }
 
 /* Shuts down the file system module, writing any unwritten data
