@@ -4,6 +4,13 @@
 #include <stdbool.h>
 #include "filesys/off_t.h"
 
+/**
+ * Added by Carmina
+ * Used for protecting the filesys and file functions which are not reentrant
+ */
+extern struct semaphore fs_sema;
+
+
 /* Sectors of system file inodes. */
 #define FREE_MAP_SECTOR 0       /* Free map file inode sector. */
 #define ROOT_DIR_SECTOR 1       /* Root directory file inode sector. */
