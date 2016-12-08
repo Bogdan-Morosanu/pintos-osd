@@ -532,9 +532,11 @@ list_find (struct list *list, list_pred_func *pred, void *aux)
 
   struct list_elem *e;
 
-  for (e = list_begin(list); e != list_end (list); e = list_next (e))
-	if (pred(e, aux))
-	  return e;
+  for (e = list_begin(list); e != list_end (list); e = list_next (e)) {
+      if (pred(e, aux)) {
+          return e;
+      }
+  }
 
   return retval;
 }

@@ -19,6 +19,7 @@
 #include "threads/palloc.h"
 #include "threads/thread.h"
 #include "threads/vaddr.h"
+#include "threads/malloc.h"
 
 #include "userprog/moro-parse-args.h"
 #include "userprog/moro-syscalls-process.h"
@@ -52,7 +53,7 @@ process_execute (const char *cmd_line)
      */
     struct proc_desc *pd = new_proc_desc(fn_copy);
     struct proc_desc *cnt_proc = thread_current()->pd;
-    if (cnt_proc) {
+    if (NULL != cnt_proc) {
         list_push_back(&cnt_proc->child_processes, &pd->elem);
 
     } else {
@@ -65,7 +66,8 @@ process_execute (const char *cmd_line)
     /* now wait for creation to actually complete execution */
     sema_down(&pd->wait_create);
 
-    printf("process started!");
+    const char *owner = thread_current()->pd == NULL ? "kernel thread" : thread_current()->pd->cmd_line;
+    printf("process %s started by %s!\n", pd->cmd_line, owner);
 
     if (tid == TID_ERROR)
         palloc_free_page (fn_copy);
@@ -77,11 +79,10 @@ static char *
 allocate_elf_name(char *str)
 {
     char *file_name_end = str;
-    while (*file_name_end && !isspace(*file_name_end++));
-
-    if (isspace(*(file_name_end - 1))) {
-        file_name_end--;
+    while (*file_name_end && !isspace(*file_name_end)) {
+        file_name_end++;
     }
+
     size_t sz = file_name_end - str + 1; // +1 for the null terminator
     char c = *file_name_end;
     *file_name_end = '\0';
@@ -103,10 +104,11 @@ start_process (void *vptr_pd)
 
     struct thread *cnt_thread = thread_current();
     cnt_thread->pd = pd;
+    pd->proc_id = cnt_thread->tid;
 
     // get name of executable
-
-    char *file_name = allocate_elf_name(pd->cmd_line);
+    // cast away const, we are initialising the process, so this is ok
+    char *file_name = allocate_elf_name((char *)(pd->cmd_line));
     printf("elf name %s.\n", file_name);
 
     struct intr_frame if_;
@@ -132,8 +134,8 @@ start_process (void *vptr_pd)
     /* If load failed, quit. */
     if (!success) {
         // TODO sort out why this palloc_free_page was initially outside the if ??
-        palloc_free_page (file_name);
-        thread_exit ();
+        // palloc_free_page (file_name) (process_exit calls palloc_free_page internally)
+        process_exit (EXIT_FAILURE);
     }
 
     /* Start the user process by simulating a return from an
@@ -146,13 +148,17 @@ start_process (void *vptr_pd)
     NOT_REACHED ();
 }
 
-// TODO implement
-//bool find_by_tid (const struct list_elem *a,
-//		  void *aux)
-//{
-//    tid_t tid = *(tid_t*)(aux);
-//    return list_entry(a, struct proc_desc, elem)->tid == tid;
-//}
+// please compiler warning
+bool find_by_tid(const struct list_elem *a, void *aux);
+
+bool find_by_tid (const struct list_elem *a,
+                  void *aux)
+{
+    struct proc_desc *proc = list_entry(a, struct proc_desc, elem);
+    printf("inspecting process %s with pid %d\n", proc->cmd_line, proc->proc_id);
+    tid_t tid = *(tid_t*)(aux);
+    return proc->proc_id == tid;
+}
 
 /* Waits for thread TID to die and returns its exit status.  If
    it was terminated by the kernel (i.e. killed due to an
@@ -164,32 +170,78 @@ start_process (void *vptr_pd)
    This function will be implemented in problem 2-2.  For now, it
    does nothing. */
 int
-process_wait (tid_t child_tid UNUSED) 
+process_wait (tid_t child_tid)
 {
-    // TODO implement
-    //    struct list_elem *ch = list_find
-    while (1) { } // 
-    return -1;
+
+    // kernel threads can wait on the global process list
+    struct list *ls = (NULL != thread_current()->pd) ?
+                            &(thread_current()->pd->child_processes) :
+                            &GLOBAL_PROCESSES;
+
+    struct list_elem *ch = list_find(ls, find_by_tid, &child_tid);
+    if (ch == list_end(ls)) {
+        const char *owner = thread_current()->pd == NULL ? "kernel thread" : thread_current()->pd->cmd_line;
+        printf("process_wait: child %d of %s not found!\n", child_tid, owner);
+        return -1;
+    }
+
+    // normal execution path, wait for process.
+    struct proc_desc *pd = list_entry(ch, struct proc_desc, elem);
+
+    const char *owner = (thread_current()->pd) ? thread_current()->pd->cmd_line : "kernel thread";
+    printf("in process wait %s acquiring wait broadcast lock\n", owner);
+    struct thread *holder = pd->wait_bcast_lock.holder;
+    printf("wait broadcast lock %s\n", holder == NULL ? "is free" : "is held by some thread");
+    lock_acquire(&pd->wait_bcast_lock);
+    if (!(pd->state == PROCESS_ZOMBIE)) {
+        struct proc_desc *cnt_pd = thread_current()->pd;
+        printf("%s waiting for process %s...\n",
+               (cnt_pd == NULL ? "kernel thread" : cnt_pd->cmd_line), pd->cmd_line);
+
+        cond_wait(&pd->wait_bcast, &pd->wait_bcast_lock);
+        printf("Woken up!\n");
+
+    } else {
+        printf("Wait not necessary...\n");
+    }
+
+    int ret = pd->ret_sts;
+    lock_release(&pd->wait_bcast_lock);
+    // TODO if we will support waiting on any process, we cannot
+    // cleanup the struct *pd
+    list_remove(&pd->elem);
+    free_proc_desc(pd);
+
+    return ret;
 }
 
-/* Free the current process's resources. */
+/* Free the proc_thread process's resources. */
 void
-process_exit (void)
+process_exit (int ret_sts)
 {
     struct thread *cur = thread_current ();
-
-    /* ---- Process Descriptor Cleanup ----
-     * Currently just frees memory for struct proc_desc
-     * TODO implement return value caching and cleanup files and children
-     */
+    printf("process %s (tid: %d) exiting with status %d\n",
+           thread_current()->pd->cmd_line, thread_current()->tid, ret_sts);
+    /* ---- Process Descriptor Cleanup ---- */
     struct proc_desc *cnt_proc = cur->pd;
-    free_proc_desc(cnt_proc);
-    cur->pd = NULL;
+    cnt_proc->ret_sts = ret_sts;
+
+    printf("in process exit %s acquiring wait broadcast lock\n", cnt_proc->cmd_line);
+    struct thread *holder = cnt_proc->wait_bcast_lock.holder;
+    printf("wait broadcast lock %s\n", holder == NULL ? "is free" : "is held by some thread");
+    lock_acquire(&(cnt_proc->wait_bcast_lock));
+
+    cnt_proc->state = PROCESS_ZOMBIE;
+    cond_signal(&(cnt_proc->wait_bcast), &(cnt_proc->wait_bcast_lock));
+
+    lock_release(&(cnt_proc->wait_bcast_lock));
+
+    printf("signaled exit to other threads!\n");
 
     /* ---- Page Directory Cleanup ---- */
     uint32_t *pd;
 
-    /* Destroy the current process's page directory and switch back
+    /* Destroy the proc_thread process's page directory and switch back
      to the kernel-only page directory. */
     pd = cur->pagedir;
     if (pd != NULL)
@@ -205,6 +257,8 @@ process_exit (void)
         pagedir_activate (NULL);
         pagedir_destroy (pd);
     }
+
+    thread_exit();
 }
 
 /* Sets up the CPU for running user code in the current

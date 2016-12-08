@@ -10,7 +10,7 @@
 /// TODO Implement
 void exit_handler(int ret_sts)
 {
-
+    process_exit(ret_sts);
 }
 
 

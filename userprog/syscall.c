@@ -3,7 +3,7 @@
 #include <syscall-nr.h>
 #include "threads/interrupt.h"
 #include "threads/thread.h"
-#include <lib/stdbool.h>
+#include "userprog/commons-process.h"
 
 static void syscall_handler (struct intr_frame *);
 
@@ -29,67 +29,42 @@ syscall_handler (struct intr_frame *f)
             }
 	        break;
 
+	    case SYS_WAIT:
+            {
+                // user process ids are just kernel thread ids
+                tid_t pid = *(tid_t*)(((char*)f->esp) + sizeof(int));
+                f->eax = process_wait(pid);
+            }
+            break;
+
 		case SYS_EXIT:
-			printf ("SYS_EXIT system call!\n");
-			thread_exit();
+            {
+                int ret_sts = *(int*)(((char*)f->esp) + sizeof(int));
+                printf("%s exits with exit code %d.\n", thread_current()->pd->cmd_line, ret_sts);
+                exit_handler(ret_sts);
+            }
 			break;
 		case SYS_WRITE:
-			{
-				int fd = *(int *)((char *)f->esp + sizeof(int));
-				void *buf= *(void **)((char *)f->esp + 2*sizeof(int));
-				unsigned size= *(unsigned *)((char *)f->esp + 2*sizeof(int) + sizeof(void *));
-				int result= handle_write(fd, buf,size);
-				f->eax=result;
-			}
+			printf ("SYS_WRITE system call!\n");
+			f->eax=0;
 			break;
 		case SYS_READ:
-			{
-				int fd = *(int *)((char *)f->esp + sizeof(int));
-				void *buf= *(void **)((char *)f->esp + 2*sizeof(int));
-				unsigned size= *(unsigned *)((char *)f->esp + 2*sizeof(int) + sizeof(void *));
-				int result= handle_read(fd, buf,size);
-				f->eax=result;
-			}
+			printf ("SYS_READ system call!\n");
 			break;
 		case SYS_OPEN:
-		  	{
-			  	char **addr = (char **)(((char*)f->esp) + sizeof(int));
-				char *file_name = *addr;
-				int fd = handle_open(file_name);
-				f->eax = fd;
-		  	}
-			break;
-		case SYS_CREATE:
-			{
-			  	char **addr = (char **)(((char*)f->esp) + sizeof(int));
-				char *file_name = *addr;
-				unsigned initial_size= *(unsigned *)((char *)f->esp + sizeof(char *));
-				bool result = handle_create(file_name, initial_size);
-				f->eax = result;
-			}
+		  {
+			char **addr = (char **)(((char*)f->esp) + sizeof(int));
+			char *file_name = *addr;
+			int fd = handle_open(file_name);
+			f->eax = fd;
+		  }
 			break;
 		case SYS_SEEK:
-			{
-				int fd = *(int *)((char *)f->esp + sizeof(int));
-				int pos = *(int *)((char *)f->esp + 2*sizeof(int));
-				int result = handle_seek(fd, pos);
-			}
 			break;
 		case SYS_TELL:
-			{
-				int fd = *(int *)((char *)f->esp + sizeof(int));
-				int res = handle_tell(fd);
-				f->eax=res;
-			}
 			break;
 		case SYS_CLOSE:
-			{
-				int fd = *(int *)((char *)f->esp + sizeof(int));
-				int result = handle_close(fd);
-				f->eax = result;
-			}
 			break;
 		}
 
-	thread_exit ();
 }

@@ -16,13 +16,16 @@ enum proc_state {
 // pre-declare thread (we need it for pointer in next struct)
 struct thread;
 
+// expose tid_t
+typedef int tid_t;
+
 struct proc_desc {
 
 	struct list_elem elem; 			// used for creating a list of proc_dsc
 
 	enum proc_state state;		    // current state
 
-	const char *cmd_line; 		    // path to elf being executed
+	const char *cmd_line; 		    // command line string passed to exec
 
 	struct list child_processes;	// list of processes created by this one
 
@@ -34,15 +37,13 @@ struct proc_desc {
 
 	struct semaphore wait_create;	// used for wait create
 
-	struct thread *current;         // pointer to current thread
+	tid_t proc_id;           // process thread id (user sees proc_id as a pid_t)
 
 	struct thread *parent;		    // pointer to parent thread
 
 	struct list opened_files;		// has the functionality of a file descriptor table
 
 	int next_file_id;				// keeps the next file descriptor that is available
-
-	struct file *executing_file; 	//used for keeping the file that is being executed
 
 };
 

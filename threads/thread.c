@@ -145,6 +145,21 @@ void thread_print_stats(void) {
 			idle_ticks, kernel_ticks, user_ticks);
 }
 
+/* Function used as the basis for a kernel thread. */
+static void user_thread(thread_func *function, void *aux) {
+    ASSERT(function != NULL);
+
+    intr_enable(); /* The scheduler runs with interrupts off. */
+
+    // user threads start in start_process but return from user main
+    // this means we need to the return value from main.
+    int (*proc_main)(void*);
+    proc_main = (int(*)(void*)) function;
+    int ret = proc_main(aux); /* Execute the process main function. */
+
+    process_exit(ret); /* If function() returns, kill the thread. */
+}
+
 /* Creates a new kernel thread named NAME with the given initial
  PRIORITY, which executes FUNCTION passing AUX as the argument,
  and adds it to the ready queue.  Returns the thread identifier
@@ -195,7 +210,8 @@ thread_create(const char *name, int priority, thread_func *function,
 
 	/* Stack frame for switch_entry(). */
 	ef = alloc_frame(t, sizeof *ef);
-	ef->eip = (void (*)(void)) kernel_thread;
+	// change user vs kernel thread structure
+	ef->eip = (void (*)(void)) (NULL == t->pd) ? kernel_thread : user_thread;
 
 	/* Stack frame for switch_threads(). */
 	sf = alloc_frame(t, sizeof *sf);
@@ -284,10 +300,6 @@ tid_t thread_tid(void) {
  returns to the caller. */
 void thread_exit(void) {
 	ASSERT(!intr_context());
-
-#ifdef USERPROG
-	process_exit ();
-#endif
 
 	/* Remove thread from all threads list, set our status to dying,
 	 and schedule another process.  That process will destroy us
@@ -415,6 +427,8 @@ static void kernel_thread(thread_func *function, void *aux) {
 	function(aux); /* Execute the thread function. */
 	thread_exit(); /* If function() returns, kill the thread. */
 }
+
+
 
 /* Returns the running thread. */
 struct thread *
