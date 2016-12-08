@@ -149,10 +149,7 @@ int handle_tell(int fd){
 int handle_write(int fd,char *buf,unsigned size){
 	//verify if STDOUT
 	if(fd == STDOUT_FILENO)
-		sema_down(&fs_sema);
 		putbuf(buf,size);
-		sema_up(&fs_sema);
-		return size;
 	if (fd == STDIN_FILENO )
 		return -1;
 	struct proc_desc *current_dsc = thread_current()->pd;

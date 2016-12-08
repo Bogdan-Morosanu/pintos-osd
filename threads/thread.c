@@ -153,11 +153,8 @@ static void user_thread(thread_func *function, void *aux) {
 
     // user threads start in start_process but return from user main
     // this means we need to the return value from main.
-    int (*proc_main)(void*);
-    proc_main = (int(*)(void*)) function;
-    int ret = proc_main(aux); /* Execute the process main function. */
 
-    process_exit(ret); /* If function() returns, kill the thread. */
+    function(aux); /* user threads are wrapped in _start, which never returns */
 }
 
 /* Creates a new kernel thread named NAME with the given initial
@@ -399,6 +396,29 @@ static void idle(void *idle_started_ UNUSED) {
 	sema_up(idle_started);
 
 	for (;;) {
+
+	    // cleanup orphan processes
+	    struct list_elem *e;
+	    for (e = list_begin(&GLOBAL_PROCESSES); e != list_end(&GLOBAL_PROCESSES); e = list_next(e)) {
+	        struct proc_desc *pd = list_entry(e, struct proc_desc, elem);
+
+	        bool success = lock_try_acquire(&pd->wait_bcast_lock);
+	        if (success) {
+	            if (pd->state == PROCESS_ZOMBIE) {
+	                // cleanup
+                    lock_release(&pd->wait_bcast_lock); // for consistency's sake
+	                list_remove(e);
+	                free_proc_desc(pd);
+	                break;
+	                // list_remove invalidates our iterators, so we break and
+	                // cleanup next zombie process on next iteration.
+
+	            } else {
+	                lock_release(&pd->wait_bcast_lock);
+	            }
+	        }
+	    }
+
 		/* Let someone else run. */
 		intr_disable();
 		thread_block();
