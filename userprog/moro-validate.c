@@ -6,7 +6,7 @@
  */
 
 #include "moro-validate.h"
-#include "vaddr.h"
+#include "threads/vaddr.h"
 
 /* Reads a byte at user virtual address UADDR.
 UADDR must be below PHYS_BASE.
