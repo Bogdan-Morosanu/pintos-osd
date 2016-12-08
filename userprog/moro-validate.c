@@ -53,7 +53,7 @@ int validate_read_addr(const void *addr, size_t size)
 
     // make sure every page is mapped
     while (begin < end) {
-        if (!get_user(begin)) {
+        if (-1 != get_user(begin)) {
             return 0; // not mapped!
         }
 
@@ -89,11 +89,13 @@ int validate_write_addr(void *addr, size_t size)
 int validate_read_string(const char *str)
 {
     const char *src = str;
-    while (*src) {
-        if (src < PHYS_BASE && get_user(src)) {
+    while ('\0' != *src) {
+        if (src < PHYS_BASE && (-1 != get_user(src))) {
             src++; // can read another byte
 
         } else {
+
+            printf("phys_base %p vs str %p, get_user %d", src, PHYS_BASE, (-1 != get_user(src)));
             return 0; // in kernel or not mapped
         }
     }

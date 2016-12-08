@@ -38,13 +38,9 @@ struct list GLOBAL_PROCESSES = LIST_INITIALIZER(GLOBAL_PROCESSES);
 tid_t
 process_execute (const char *cmd_line) 
 {
-    if (!validate_read_string(cmd_line)) {
-        if (thread_current()->pd != NULL) {
-            // this is a user process
-            process_exit(EXIT_FAILURE);
-        } else {
-            PANIC ("Kernel bug - unexpected page fault in kernel");
-        }
+    if (NULL != thread_current()->pd && !validate_read_string(cmd_line)) {
+        // this is a user process
+        process_exit(EXIT_FAILURE);
     }
 
     char *fn_copy;

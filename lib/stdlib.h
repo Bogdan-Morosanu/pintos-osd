@@ -8,6 +8,7 @@
 
 /* We define these the same for all machines.
    Changes from this to the outside world should be done in `_exit'.  */
+#undef EXIT_FAILURE // to mask out unix <stdlib.h>
 #define	EXIT_FAILURE	-1	/* Failing exit status.  */
 #define	EXIT_SUCCESS	0	/* Successful exit status.  */
 
