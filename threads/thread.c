@@ -399,29 +399,6 @@ static void idle(void *idle_started_ UNUSED) {
 	sema_up(idle_started);
 
 	for (;;) {
-
-	    // cleanup orphan processes
-	    struct list_elem *e;
-	    for (e = list_begin(&GLOBAL_PROCESSES); e != list_end(&GLOBAL_PROCESSES); e = list_next(e)) {
-	        struct proc_desc *pd = list_entry(e, struct proc_desc, elem);
-
-	        bool success = lock_try_acquire(&pd->wait_bcast_lock);
-	        if (success) {
-	            if (pd->state == PROCESS_ZOMBIE) {
-	                // cleanup
-                    lock_release(&pd->wait_bcast_lock); // for consistency's sake
-	                list_remove(e);
-	                free_proc_desc(pd);
-	                break;
-	                // list_remove invalidates our iterators, so we break and
-	                // cleanup next zombie process on next iteration.
-
-	            } else {
-	                lock_release(&pd->wait_bcast_lock);
-	            }
-	        }
-	    }
-
 		/* Let someone else run. */
 		intr_disable();
 		thread_block();

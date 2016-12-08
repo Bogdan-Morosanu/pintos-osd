@@ -4,9 +4,6 @@
 #include "threads/interrupt.h"
 #include "threads/thread.h"
 #include "userprog/commons-process.h"
-#include "userprog/carmina-syscalls-files.h"
-#include "userprog/moro-syscalls-process.h"
-#include "userprog/process.h"
 
 static void syscall_handler (struct intr_frame *);
 
@@ -22,6 +19,7 @@ syscall_handler (struct intr_frame *f)
   int syscall_no = *((int*)f->esp);
 
   printf ("system call no %d!\n", syscall_no);
+
 
   switch (syscall_no) {
   case SYS_EXEC:
@@ -42,6 +40,7 @@ syscall_handler (struct intr_frame *f)
   case SYS_EXIT:
     {
       int ret_sts = *(int*)(((char*)f->esp) + sizeof(int));
+      printf("%s exits with exit code %d.\n", thread_current()->pd->cmd_line, ret_sts);
       exit_handler(ret_sts);
     }
     break;
@@ -71,6 +70,7 @@ syscall_handler (struct intr_frame *f)
       char **addr = (char **)(((char*)f->esp) + sizeof(int));
       char *file_name = *addr;
       int fd = handle_open(file_name);
+      printf("\n!FD %d \n ", fd);
       f->eax = fd;
     }
     break;
@@ -89,7 +89,7 @@ syscall_handler (struct intr_frame *f)
     {
       int fd = *(int *)((char *)f->esp + sizeof(int));
       int pos = *(int *)((char *)f->esp + 2*sizeof(int));
-      /*int result = */ handle_seek(fd, pos);
+      int result = handle_seek(fd, pos);
     }
     break;
 
