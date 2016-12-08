@@ -29,6 +29,11 @@ struct read_args {
     int fd;
 };
 
+struct seek_args {
+    unsigned pos;
+    int fd;
+};
+
 static void
 syscall_handler (struct intr_frame *f)
 {
@@ -98,9 +103,8 @@ syscall_handler (struct intr_frame *f)
 
   case SYS_SEEK:
     {
-      int fd = *(int *)((char *)f->esp + sizeof(int));
-      int pos = *(int *)((char *)f->esp + 2*sizeof(int));
-      /*int result = */ handle_seek(fd, pos);
+      struct seek_args *s = ((int*)f->esp)[1];
+      /*int result = */ handle_seek(s->fd, s->pos);
     }
     break;
 
