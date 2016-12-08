@@ -34,6 +34,12 @@ struct seek_args {
     int fd;
 };
 
+
+struct create_args {
+    unsigned initial_size;
+    const char *file;
+};
+
 static void
 syscall_handler (struct intr_frame *f)
 {
@@ -86,17 +92,17 @@ syscall_handler (struct intr_frame *f)
       char *file_name = *addr;
 
       int fd = handle_open(file_name);
-      printf("\nfd returned: %d\n\n", fd);
-      f->eax = fd;
+
     }
     break;
 
   case SYS_CREATE:
     {
-      char **addr = (char **)(((char*)f->esp) + sizeof(int));
-      char *file_name = *addr;
-      unsigned initial_size= *(unsigned *)((char *)f->esp + sizeof(char *));
-      bool result = handle_create(file_name, initial_size);
+      //char **addr = (char **)(((char*)f->esp) + sizeof(int));
+      //char *file_name = *addr;
+      //unsigned initial_size= *(unsigned *)((char *)f->esp + sizeof(char *));
+      struct create_args *c= ((int *)f->esp)[1];
+      bool result = handle_create(c->file, c->initial_size);
       f->eax = result;
     }
     break;

@@ -87,10 +87,18 @@ wait (pid_t pid)
   return syscall1 (SYS_WAIT, pid);
 }
 
+
+struct create_args {
+    unsigned initial_size;
+    const char *file;
+};
+
 bool
 create (const char *file, unsigned initial_size)
 {
-  return syscall2 (SYS_CREATE, file, initial_size);
+  struct create_args c = { initial_size, file };
+  return syscall1 (SYS_CREATE, &c);
+  //return syscall2 (SYS_CREATE, file, initial_size);
 }
 
 bool

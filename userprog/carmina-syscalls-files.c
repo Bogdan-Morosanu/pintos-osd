@@ -105,7 +105,6 @@ int handle_seek(int fd, int pos){
 			//call seek on the file
 			//protect file
 			sema_down(&fs_sema);
-			printf("\nCalling syscall seek\n");
 			file_seek(file_found->f, pos);
 			sema_up(&fs_sema);
 			return 0;
@@ -113,9 +112,6 @@ int handle_seek(int fd, int pos){
 		else
 		{
 			//file descriptor not found
-			printf("\nNot ok seek\n");
-			printf("\nPos %d\n", pos);
-			printf("\nFd %d\n", fd);
 			return -1;
 		}
 }
@@ -152,8 +148,9 @@ int handle_tell(int fd){
  */
 int handle_write(int fd,char *buf,unsigned size){
 
-    printf("%s calling write on fd %d.\n", thread_current()->pd->cmd_line, fd);
-
+	if (!validate_read_addr(buf, size)) {
+			exit_handler(EXIT_FAILURE);
+	}
     //verify if STDOUT
     if (fd == STDOUT_FILENO) {
 		sema_down(&fs_sema);
@@ -191,6 +188,9 @@ int handle_write(int fd,char *buf,unsigned size){
  * @param size represents the size in bytes to be read
  */
 int handle_read(int fd, char *buf, unsigned size){
+	if (!validate_write_addr(buf, size)) {
+			exit_handler(EXIT_FAILURE);
+		}
 	struct proc_desc *current_dsc = thread_current()->pd;
 	struct list_elem *e = list_find(&current_dsc->opened_files, fd_pred, &fd);
 	if (e != list_end(&current_dsc->opened_files)){
@@ -215,6 +215,9 @@ int handle_read(int fd, char *buf, unsigned size){
  * @param initial_size represents the initial size of the file
  */
 bool handle_create(char *file_name, unsigned initial_size){
+	if (!validate_read_string(file_name)) {
+			exit_handler(EXIT_FAILURE);
+	}
 	if (strlen(file_name) > MAX_FILE_NAME){
 			return false;
 		}
