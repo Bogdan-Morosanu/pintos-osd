@@ -40,7 +40,7 @@ process_execute (const char *cmd_line)
 {
     char *fn_copy;
     tid_t tid;
-    printf("executing %s\n", cmd_line);
+    
     /* Make a copy of FILE_NAME.
      Otherwise there's a race between the caller and load(). */
     fn_copy = palloc_get_page (0);
@@ -65,9 +65,6 @@ process_execute (const char *cmd_line)
 
     /* now wait for creation to actually complete execution */
     sema_down(&pd->wait_create);
-
-    const char *owner = thread_current()->pd == NULL ? "kernel thread" : thread_current()->pd->cmd_line;
-    printf("process %s started by %s!\n", pd->cmd_line, owner);
 
     if (tid == TID_ERROR)
         palloc_free_page (fn_copy);
@@ -117,9 +114,6 @@ start_process (void *vptr_pd)
     pd->executing_file = filesys_open(file_name);
     file_deny_write(pd->executing_file);
 
-
-    printf("elf name %s.\n", file_name);
-
     struct intr_frame if_;
     bool success;
 
@@ -164,7 +158,6 @@ bool find_by_tid (const struct list_elem *a,
                   void *aux)
 {
     struct proc_desc *proc = list_entry(a, struct proc_desc, elem);
-    printf("inspecting process %s with pid %d\n", proc->cmd_line, proc->proc_id);
     tid_t tid = *(tid_t*)(aux);
     return proc->proc_id == tid;
 }
@@ -189,29 +182,15 @@ process_wait (tid_t child_tid)
 
     struct list_elem *ch = list_find(ls, find_by_tid, &child_tid);
     if (ch == list_end(ls)) {
-        const char *owner = thread_current()->pd == NULL ? "kernel thread" : thread_current()->pd->cmd_line;
-        printf("process_wait: child %d of %s not found!\n", child_tid, owner);
         return -1;
     }
 
     // normal execution path, wait for process.
     struct proc_desc *pd = list_entry(ch, struct proc_desc, elem);
 
-    const char *owner = (thread_current()->pd) ? thread_current()->pd->cmd_line : "kernel thread";
-    printf("in process wait %s acquiring wait broadcast lock\n", owner);
-    struct thread *holder = pd->wait_bcast_lock.holder;
-    printf("wait broadcast lock %s\n", holder == NULL ? "is free" : "is held by some thread");
     lock_acquire(&pd->wait_bcast_lock);
     if (!(pd->state == PROCESS_ZOMBIE)) {
-        struct proc_desc *cnt_pd = thread_current()->pd;
-        printf("%s waiting for process %s...\n",
-               (cnt_pd == NULL ? "kernel thread" : cnt_pd->cmd_line), pd->cmd_line);
-
         cond_wait(&pd->wait_bcast, &pd->wait_bcast_lock);
-        printf("Woken up!\n");
-
-    } else {
-        printf("Wait not necessary...\n");
     }
 
     int ret = pd->ret_sts;
@@ -228,27 +207,18 @@ process_wait (tid_t child_tid)
 void
 process_exit (int ret_sts)
 {
-    struct thread *cur = thread_current ();
-    printf("process %s (tid: %d) exiting with status %d\n",
-           thread_current()->pd->cmd_line, thread_current()->tid, ret_sts);
     /* ---- Process Descriptor Cleanup ---- */
+    struct thread *cur = thread_current ();
     struct proc_desc *cnt_proc = cur->pd;
 
-    // signal exit to parent
-    cnt_proc->ret_sts = ret_sts;
-
-    printf("in process exit %s acquiring wait broadcast lock\n", cnt_proc->cmd_line);
-    struct thread *holder = cnt_proc->wait_bcast_lock.holder;
-    printf("wait broadcast lock %s\n", holder == NULL ? "is free" : "is held by some thread");
+    // copy exit code and signal exit to parent
     lock_acquire(&(cnt_proc->wait_bcast_lock));
 
+    cnt_proc->ret_sts = ret_sts;
     cnt_proc->state = PROCESS_ZOMBIE;
     cond_signal(&(cnt_proc->wait_bcast), &(cnt_proc->wait_bcast_lock));
 
     lock_release(&(cnt_proc->wait_bcast_lock));
-
-    printf("signaled exit to other threads!\n");
-
 
     /**
      * Added by Carmina

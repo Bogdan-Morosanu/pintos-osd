@@ -55,7 +55,7 @@ dump_chars(void *from, void *to)
 
 void *parse_args(const char *args, void *where)
 {
-    printf("initially stack pointer was %p\n", where);
+
     struct Argcv *acv = malloc(sizeof(*acv));
 
     const char *src = args; // data source
@@ -90,8 +90,6 @@ void *parse_args(const char *args, void *where)
         } while (*src++);
     }
 
-    printf("%d num words\n", num_wds);
-    printf("%d extra globbed whitespace\n", globbed_wspace);
     // allocate num words + 1 for num words ptrs
     // and NULL sentinel as well
     acv->argc = num_wds;
@@ -149,17 +147,11 @@ void *parse_args(const char *args, void *where)
 
     // now we will just copy over argv, argc and *argv
     // note dst points to next available char
-    printf("strings on stack:\n");
-    dump_chars(esp, where);
-
-    printf("\n");
 
     // size align to char*
     size_t sz = sizeof(char*);
     size_t remainder = ((size_t)esp) % sz;
     void *dst_argv = ((char*)esp) - remainder;
-
-    printf("after alignment stack is at %p\n", dst_argv);
 
     void *argv_end = dst_argv;
 
@@ -168,25 +160,17 @@ void *parse_args(const char *args, void *where)
     dst_argv = ((char*)dst_argv) - argv_sz;
     memcpy(dst_argv, acv->argv, argv_sz);
 
-    printf("*argv contents : \n");
-    dump_ptrs(dst_argv, argv_end);
-    printf("\n");
-
     // copy argv and argc
     void *argv_begin = dst_argv;
     dst_argv = ((char*)dst_argv) - sizeof(acv->argv);
     (*(void**)dst_argv) = argv_begin;
-    printf("argv contents:\n%p : %p\n\n", dst_argv, *(void**)dst_argv);
-
+    
     dst_argv = ((char*)dst_argv) - sizeof(acv->argc);
     (*(int*)dst_argv) = acv->argc;
-    printf("argc contents\n:%p : %d\n\n", dst_argv, *(int*)dst_argv);
-
+    
     // put the dummy return address 0.
     dst_argv = ((char*)dst_argv) - sizeof(void*);
     (*(void**)dst_argv) = NULL;
-
-    printf("null terminator:\n%p : %p\n", dst_argv, *(void**)dst_argv);
 
     free(acv->argv);
     free(acv);
