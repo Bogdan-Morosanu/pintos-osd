@@ -42,7 +42,10 @@ static bool fd_pred(const struct list_elem *a, void *aux){
  */
 int handle_open(const char *name)
 {
-	if (strlen(name) > MAX_FILE_NAME){
+	if (name ==NULL){
+		exit_handler(EXIT_FAILURE);
+	}
+	if (strlen(name) > MAX_FILE_NAME || strlen(name) ==0){
 		return -1;
 	}
 	if (!validate_read_string(name)) {
@@ -215,6 +218,9 @@ int handle_read(int fd, char *buf, unsigned size){
  * @param initial_size represents the initial size of the file
  */
 bool handle_create(char *file_name, unsigned initial_size){
+	if (file_name == NULL){
+		exit_handler(EXIT_FAILURE);
+	}
 	if (!validate_read_string(file_name)) {
 			exit_handler(EXIT_FAILURE);
 	}
