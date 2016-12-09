@@ -8,6 +8,7 @@
 #include "userprog/moro-syscalls-process.h"
 #include "userprog/process.h"
 #include "userprog/moro-parse-args.h"
+#include "lib/stdlib.h"
 
 static void syscall_handler (struct intr_frame *);
 
@@ -43,9 +44,11 @@ struct create_args {
 static void
 syscall_handler (struct intr_frame *f)
 {
-  int syscall_no = *((int*)f->esp);
+  if (!validate_read_addr(f->esp, 2 * sizeof(int))) {
+      process_exit(EXIT_FAILURE);
+  }
 
-  printf ("system call no %d!\n", syscall_no);
+  int syscall_no = *((int*)f->esp);
 
   switch (syscall_no) {
   case SYS_EXEC:
