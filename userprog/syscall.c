@@ -132,5 +132,11 @@ syscall_handler (struct intr_frame *f)
       f->eax = result;
     }
     break;
+
+  default:
+    { // invalid syscall number
+      process_exit(EXIT_FAILURE);
+    }
+    break;
   }
 }
