@@ -31,6 +31,24 @@ static bool load (const char *cmdline, void (**eip) (void), void **esp);
 /// holds in list all processes started by kernel or which have been orphaned.
 struct list GLOBAL_PROCESSES = LIST_INITIALIZER(GLOBAL_PROCESSES);
 
+static char *
+allocate_elf_name(char *str)
+{
+    char *file_name_end = str;
+    while (*file_name_end && !isspace(*file_name_end)) {
+        file_name_end++;
+    }
+
+    size_t sz = file_name_end - str + 1; // +1 for the null terminator
+    char c = *file_name_end;
+    *file_name_end = '\0';
+
+    char *file_name = malloc(sz);
+    strlcpy(file_name, str, sz);
+    *file_name_end = c;
+    return file_name;
+}
+
 /* Starts a new thread running a user program loaded from
    FILENAME.  The new thread may be scheduled (and may even exit)
    before process_execute() returns.  Returns the new process's
@@ -41,6 +59,14 @@ process_execute (const char *cmd_line)
     if (NULL != thread_current()->pd && !validate_read_string(cmd_line)) {
         // this is a user process
         process_exit(EXIT_FAILURE);
+    } else {
+        char *file = allocate_elf_name((char*)cmd_line);
+        struct file *f = filesys_open(file);
+        free(file);
+
+        if (NULL == f) {
+            return -1;
+        }
     }
 
     char *fn_copy;
@@ -75,27 +101,6 @@ process_execute (const char *cmd_line)
         palloc_free_page (fn_copy);
     return tid;
 }
-
-
-static char *
-allocate_elf_name(char *str)
-{
-    char *file_name_end = str;
-    while (*file_name_end && !isspace(*file_name_end)) {
-        file_name_end++;
-    }
-
-    size_t sz = file_name_end - str + 1; // +1 for the null terminator
-    char c = *file_name_end;
-    *file_name_end = '\0';
-
-    char *file_name = malloc(sz);
-    strlcpy(file_name, str, sz);
-    *file_name_end = c;
-    return file_name;
-}
-
-
 
 /* A thread function that loads a user process and starts it
    running. */
