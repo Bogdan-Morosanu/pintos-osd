@@ -69,6 +69,24 @@ int handle_open(const char *name)
 	return new_file->fd;
 }
 
+int
+handle_filesize(int fd)
+{
+    struct proc_desc *current_dsc = thread_current()->pd;
+    struct list_elem *e = list_find(&current_dsc->opened_files, fd_pred, &fd);
+
+    if (e != list_end(&current_dsc->opened_files) && fd!=0 && fd!=1){
+        struct user_file *file_found = list_entry (e, struct user_file, elem);
+        sema_down(&fs_sema);
+        off_t retval = file_length(file_found->f);
+        sema_up(&fs_sema);
+        return retval;
+
+    } else {
+        return -1;
+    }
+}
+
 /**
  * Function used for handling the close system call
  * @param fd represents the file descriptor
@@ -190,9 +208,10 @@ int handle_write(int fd,char *buf,unsigned size){
  * @param size represents the size in bytes to be read
  */
 int handle_read(int fd, char *buf, unsigned size){
-	if (!validate_write_addr(buf, size)) {
-			exit_handler(EXIT_FAILURE);
-		}
+    if (!validate_write_addr(buf, size)) {
+	    exit_handler(EXIT_FAILURE);
+	}
+
 	struct proc_desc *current_dsc = thread_current()->pd;
 	struct list_elem *e = list_find(&current_dsc->opened_files, fd_pred, &fd);
 	if (e != list_end(&current_dsc->opened_files)){
