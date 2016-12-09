@@ -156,15 +156,15 @@ page_fault (struct intr_frame *f)
      body, and replace it with code that brings in the page to
      which fault_addr refers. */
 
-  // always fault the user
-  if (!user) {
-      if (fault_addr < PHYS_BASE) {
-          // userland address faulting the kernel, do not panic
-          f->eip = f->eax; // return to initial address
-          f->eax = ~0u; // set all bits in eax to mark page fault
-          return;
-      }
-  }
+//  // always fault the user
+//  if (!user) {
+//      if (fault_addr < PHYS_BASE) {
+//          // userland address faulting the kernel, do not panic
+//          f->eip = f->eax; // return to initial address
+//          f->eax = ~0u; // set all bits in eax to mark page fault
+//          return;
+//      }
+//  }
 
   printf ("Page fault at %p: %s error %s page in %s context.\n",
                 fault_addr,

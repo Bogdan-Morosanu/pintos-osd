@@ -7,6 +7,7 @@
 
 #include "moro-validate.h"
 #include "threads/vaddr.h"
+#include "threads/thread.h"
 
 /* Reads a byte at user virtual address UADDR.
 UADDR must be below PHYS_BASE.
@@ -53,7 +54,7 @@ int validate_read_addr(const void *addr, size_t size)
 
     // make sure every page is mapped
     while (begin < end) {
-        if (-1 == get_user(begin)) {
+        if ((NULL == pagedir_get_page(thread_current()->pagedir, begin))) {
             return 0; // not mapped!
         }
 
@@ -75,7 +76,7 @@ int validate_write_addr(void *addr, size_t size)
 
     // make sure every page is mapped
     while (begin < end) {
-        if (!put_user(begin, '\0')) {
+        if ((NULL == pagedir_get_page(thread_current()->pagedir, begin))) {
             return 0; // not mapped!
         }
 
@@ -88,17 +89,30 @@ int validate_write_addr(void *addr, size_t size)
 /// TODO Implement
 int validate_read_string(const char *str)
 {
-    const char *src = str;
-    while ('\0' != *src) {
-        if (src < PHYS_BASE && (-1 != get_user(src))) {
-            src++; // can read another byte
+    if (str >= PHYS_BASE) {
+         return 0;
+    }
 
-        } else {
+    const char *src = str;
+    while (NULL != src &&
+           src < PHYS_BASE) {
+
+        void *page_dr = pagedir_get_page(thread_current()->pagedir, src);
+
+        if ((NULL == page_dr)) {
 
             return 0; // in kernel or not mapped
+
+        } else {
+            if (*src != '\0') {
+                src++; // can read another byte
+            } else {
+                break;
+            }
         }
     }
 
-    return 1; // all good
+
+    return src < PHYS_BASE; // all good
 }
 
