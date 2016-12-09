@@ -45,7 +45,7 @@ int handle_open(const char *name)
 	if (name ==NULL){
 		exit_handler(EXIT_FAILURE);
 	}
-	if (strlen(name) > MAX_FILE_NAME || strlen(name) ==0){
+	if (strlen(name) > MAX_FILE_NAME || strlen(name) == 0){
 		return -1;
 	}
 	if (!validate_read_string(name)) {

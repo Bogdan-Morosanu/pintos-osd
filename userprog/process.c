@@ -32,20 +32,27 @@ static bool load (const char *cmdline, void (**eip) (void), void **esp);
 struct list GLOBAL_PROCESSES = LIST_INITIALIZER(GLOBAL_PROCESSES);
 
 static char *
-allocate_elf_name(char *str)
+allocate_elf_name(const char *str)
 {
-    char *file_name_end = str;
+    size_t cmd_line_sz = strlen(str) + 1;
+    char *str2 = malloc(cmd_line_sz);
+    strlcpy(str2, str, cmd_line_sz);
+
+    char *file_name_end = str2;
     while (*file_name_end && !isspace(*file_name_end)) {
         file_name_end++;
     }
 
-    size_t sz = file_name_end - str + 1; // +1 for the null terminator
+    size_t sz = file_name_end - str2 + 1; // +1 for the null terminator
     char c = *file_name_end;
     *file_name_end = '\0';
 
     char *file_name = malloc(sz);
-    strlcpy(file_name, str, sz);
+    strlcpy(file_name, str2, sz);
     *file_name_end = c;
+
+    free(str2);
+
     return file_name;
 }
 
@@ -200,6 +207,7 @@ process_wait (tid_t child_tid)
     lock_acquire(&pd->wait_bcast_lock);
     if (!(pd->state == PROCESS_ZOMBIE)) {
         cond_wait(&pd->wait_bcast, &pd->wait_bcast_lock);
+
     }
 
     int ret = pd->ret_sts;
