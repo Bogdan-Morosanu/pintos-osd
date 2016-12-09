@@ -42,15 +42,14 @@ static bool fd_pred(const struct list_elem *a, void *aux){
  */
 int handle_open(const char *name)
 {
-	if (name ==NULL){
+	if (name == NULL || !validate_read_string(name)) {
 		exit_handler(EXIT_FAILURE);
 	}
+	
 	if (strlen(name) > MAX_FILE_NAME || strlen(name) == 0){
 		return -1;
 	}
-	if (!validate_read_string(name)) {
-		exit_handler(EXIT_FAILURE);
-	}
+
 	struct proc_desc *current_dsc = thread_current()->pd;
 	if (current_dsc->next_file_id > MAX_NO_OPENED_FILES){
 		return -1;
