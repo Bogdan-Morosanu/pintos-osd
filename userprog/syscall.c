@@ -133,6 +133,12 @@ syscall_handler (struct intr_frame *f)
     }
     break;
 
+  case SYS_FILESIZE:
+  {
+      int fd = *(int *)((char *)f->esp + sizeof(int));
+      f->eax = handle_filesize(fd);
+  }
+  break;
   default:
     { // invalid syscall number
       process_exit(EXIT_FAILURE);
