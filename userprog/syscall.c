@@ -95,7 +95,7 @@ syscall_handler (struct intr_frame *f)
       char *file_name = *addr;
 
       int fd = handle_open(file_name);
-
+      f->eax = fd;
     }
     break;
 
