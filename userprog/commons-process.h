@@ -4,6 +4,7 @@
 #include <filesys/file.h>
 #include <lib/kernel/list.h>
 #include <threads/synch.h>
+#include <vm/moro-common.h>
 
 enum proc_state {
 
@@ -27,7 +28,7 @@ struct proc_desc {
 
 	const char *cmd_line; 		    // command line string passed to exec
 
-        struct file *executing_file; // elf file being executed
+    struct file *executing_file; // elf file being executed
   
 	struct list child_processes;	// list of processes created by this one
 
@@ -47,6 +48,7 @@ struct proc_desc {
 
 	int next_file_id;				// keeps the next file descriptor that is available
 
+	struct paged_file_handle *elf_handle;  // populated for lazy loading
 };
 
 /// @brief returns new process descriptor with parent set as
