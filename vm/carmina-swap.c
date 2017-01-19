@@ -6,16 +6,19 @@
  */
 #include "carmina-swap.h"
 #include <stdio.h>
+#include "threads/synch.h"
 
 /**
  * Bitmap used for keeping track of the
  * used and unused sectors of the swap block
  */
-struct bitmap * swap_table;y
+struct bitmap * swap_table;
 /**
  * The swap block
  */
 struct block  * swap_block;
+
+struct lock swap_lock;
 
 /**
  * Create the initial swap table
@@ -43,6 +46,7 @@ void swap_table_alloc(void)
 	}
 
 	bitmap_set_all(swap_table, SWAP_FREE);
+	lock_init(&swap_lock);
 }
 
 /**

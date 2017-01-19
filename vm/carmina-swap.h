@@ -10,6 +10,7 @@
 
 #include "devices/block.h"
 #include "threads/vaddr.h"
+#include "threads/synch.h"
 #include <bitmap.h>
 
 #define SWAP_SECTORS_PER_PAGE (PGSIZE / BLOCK_SECTOR_SIZE)
@@ -19,9 +20,10 @@
 
 extern struct bitmap *swap_table;
 extern struct block *swap_block;
+extern struct lock swap_lock;
 
-void swap_alloc(void);
-void swap_uninit(void);
+void swap_table_alloc(void);
+void swap_table_free(void);
 
 void swap_in(size_t bitmap_idx, void *frame_addr);
 size_t swap_out(void *frame_addr);
