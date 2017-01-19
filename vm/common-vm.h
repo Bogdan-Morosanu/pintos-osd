@@ -14,13 +14,13 @@
 void pte_forall(uint32_t *pd, int user_only, void (*foo)(uint32_t * pte));
 
 /// we will use all the available bits in PTE_AVL
-# define PAGE_LAZY_LOADED 0x800
-# define PAGE_SWAPPED 0x400
-# define PAGE_MMAPPED 0x200
+#define PAGE_LAZY_LOADED 0x800
+#define PAGE_SWAPPED 0x400
+#define PAGE_MMAPPED 0x200
 
-# define IS_LAZY_LOADED ( pte ) (( pte ) & PAGE_LAZY_LOADED )
-# define IS_SWAPPED ( pte ) (( pte ) & PAGE_SWAPPED )
-# define IS_MMAPPED ( pte ) (( pte ) & PAGE_MMAPPED )
+#define IS_LAZY_LOADED ( pte ) (( pte ) & PAGE_LAZY_LOADED )
+#define IS_SWAPPED ( pte ) (( pte ) & PAGE_SWAPPED )
+#define IS_MMAPPED ( pte ) (( pte ) & PAGE_MMAPPED )
 
 /// sets free flag bits in pte to PAGE_LAZY_LOADED used by pte_forall
 inline void

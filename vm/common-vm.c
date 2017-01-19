@@ -6,13 +6,15 @@
  */
 
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "common-vm.h"
 
 #include "userprog/pagedir.h"
 #include "threads/pte.h"
+#include "threads/vaddr.h"
 
-#define PGELEMS (PGSIZE / (sizeof uint32_t))
+#define PGELEMS (PGSIZE / (sizeof(uint32_t)))
 
 void
 pte_forall(uint32_t *pd , int user_only, void (*foo)(uint32_t * pte))

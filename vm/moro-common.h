@@ -8,6 +8,8 @@
 #ifndef SRC_VM_MORO_COMMON_H_
 #define SRC_VM_MORO_COMMON_H_
 
+struct file;
+
 /// shared between handling lazy loading and mmap files
 struct paged_file_handle {
 
