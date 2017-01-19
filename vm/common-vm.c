@@ -17,7 +17,7 @@
 #define PGELEMS (PGSIZE / (sizeof(uint32_t)))
 
 void
-pte_forall(uint32_t *pd , int user_only, void (*foo)(uint32_t * pte))
+pte_forall(uint32_t *pd , int user_only, void (*foo)(uint32_t *))
 {
     if (NULL == pd) {
         printf("[WARNING] calling pte_forall on null pde!\n");

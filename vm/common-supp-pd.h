@@ -8,6 +8,10 @@
 #ifndef SRC_VM_COMMON_SUPP_PD_H_
 #define SRC_VM_COMMON_SUPP_PD_H_
 
+#include <stdint.h>
+
+#include "threads/thread.h"
+
 void sup_page_dir_set(struct thread *t, void *v_addr, uint32_t val);
 
 uint32_t sup_page_dir_get(struct thread *t, void *v_addr);

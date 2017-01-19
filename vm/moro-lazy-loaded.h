@@ -8,13 +8,14 @@
 #ifndef SRC_VM_MORO_LAZY_LOADED_H_
 #define SRC_VM_MORO_LAZY_LOADED_H_
 
+#include <stdint.h>
 
 #include "moro-common.h"
 
 /// allocates and populates paged_file_handle
 /// at process creation
 struct paged_file_handle *
-setup_lazy_load(const char * path);
+setup_lazy_load(struct file *f);
 
 /// loads the lazy loaded page described by page
 /// table entries passed in .

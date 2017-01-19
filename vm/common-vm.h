@@ -11,7 +11,7 @@
 #include <stdint.h>
 
 /// applies foo on all ptes of pde .
-void pte_forall(uint32_t *pd, int user_only, void (*foo)(uint32_t * pte));
+void pte_forall(uint32_t *pd, int user_only, void (*foo)(uint32_t *));
 
 /// we will use all the available bits in PTE_AVL
 #define PAGE_LAZY_LOADED 0x800

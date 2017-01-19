@@ -6,6 +6,7 @@
  */
 
 #include "moro-lazy-loaded.h"
+#include "lib/debug.h"
 
 struct paged_file_handle *
 setup_lazy_load(struct file *file)

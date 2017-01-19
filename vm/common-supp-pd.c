@@ -10,6 +10,8 @@
 #include "userprog/pagedir.h"
 #include "threads/vaddr.h"
 
+#include "lib/debug.h"
+
 /// sets up supplemental page table filled with info for kernel pages
 /// pages.
 uint32_t *sup_page_dir_alloc()
@@ -34,7 +36,7 @@ void sup_page_dir_set(struct thread *t, void *v_addr, uint32_t val)
 {
     ASSERT(t->pagedir && t->sup_pagedir);
 
-    if (t->pd_lock->holder != thread_current()) {
+    if (t->pd_lock.holder != thread_current()) {
         lock_acquire(&t->pd_lock);
     }
 
@@ -49,7 +51,7 @@ uint32_t sup_page_dir_get(struct thread *t, void *v_addr)
 {
     ASSERT(t->pagedir && t->sup_pagedir);
 
-    if (t->pd_lock->holder != thread_current()) {
+    if (t->pd_lock.holder != thread_current()) {
             lock_acquire(&t->pd_lock);
     }
 
