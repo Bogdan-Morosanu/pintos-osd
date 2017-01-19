@@ -43,4 +43,10 @@ pte_set_mmaped(uint32_t * pte)
     *pte = *pte || PAGE_MMAPPED;
 }
 
+inline void
+pte_clear_additional(uint32_t * pte)
+{
+	*pte = *pte & !PAGE_MMAPPED & !PAGE_LAZY_LOADED & !PAGE_SWAPPED;
+}
+
 #endif /* SRC_VM_COMMON_VM_H_ */
