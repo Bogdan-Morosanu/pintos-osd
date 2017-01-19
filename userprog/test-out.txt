@@ -1,0 +1,1384 @@
+cd build && make check
+make[1]: Entering directory '/home/carmina/pintos/src/userprog/build'
+pintos -v -k -T 60 --bochs  --filesys-size=2 -p tests/userprog/rox-multichild -a rox-multichild -p tests/userprog/child-rox -a child-rox -- -q  -f run rox-multichild < /dev/null 2> tests/userprog/rox-multichild.errors > tests/userprog/rox-multichild.output
+perl -I../.. ../../tests/userprog/rox-multichild.ck tests/userprog/rox-multichild tests/userprog/rox-multichild.result
+FAIL tests/userprog/rox-multichild
+Test output failed to match any acceptable form.
+
+Acceptable output:
+  (rox-multichild) begin
+  (rox-multichild) open "child-rox"
+  (rox-multichild) read "child-rox"
+  (rox-multichild) write "child-rox"
+  (rox-multichild) exec "child-rox 5"
+  (child-rox) begin
+  (child-rox) try to write "child-rox"
+  (child-rox) exec "child-rox 4"
+  (child-rox) begin
+  (child-rox) try to write "child-rox"
+  (child-rox) exec "child-rox 3"
+  (child-rox) begin
+  (child-rox) try to write "child-rox"
+  (child-rox) exec "child-rox 2"
+  (child-rox) begin
+  (child-rox) try to write "child-rox"
+  (child-rox) exec "child-rox 1"
+  (child-rox) begin
+  (child-rox) try to write "child-rox"
+  (child-rox) try to write "child-rox"
+  (child-rox) end
+  child-rox: exit(12)
+  (child-rox) try to write "child-rox"
+  (child-rox) end
+  child-rox: exit(12)
+  (child-rox) try to write "child-rox"
+  (child-rox) end
+  child-rox: exit(12)
+  (child-rox) try to write "child-rox"
+  (child-rox) end
+  child-rox: exit(12)
+  (child-rox) try to write "child-rox"
+  (child-rox) end
+  child-rox: exit(12)
+  (rox-multichild) write "child-rox"
+  (rox-multichild) end
+  rox-multichild: exit(0)
+Differences in `diff -u' format:
+- (rox-multichild) begin
+- (rox-multichild) open "child-rox"
+- (rox-multichild) read "child-rox"
+- (rox-multichild) write "child-rox"
+- (rox-multichild) exec "child-rox 5"
+- (child-rox) begin
+- (child-rox) try to write "child-rox"
+- (child-rox) exec "child-rox 4"
+- (child-rox) begin
+- (child-rox) try to write "child-rox"
+- (child-rox) exec "child-rox 3"
+- (child-rox) begin
+- (child-rox) try to write "child-rox"
+- (child-rox) exec "child-rox 2"
+- (child-rox) begin
+- (child-rox) try to write "child-rox"
+- (child-rox) exec "child-rox 1"
+- (child-rox) begin
+- (child-rox) try to write "child-rox"
+- (child-rox) try to write "child-rox"
+- (child-rox) end
+- child-rox: exit(12)
+- (child-rox) try to write "child-rox"
+- (child-rox) end
+- child-rox: exit(12)
+- (child-rox) try to write "child-rox"
+- (child-rox) end
+- child-rox: exit(12)
+- (child-rox) try to write "child-rox"
+- (child-rox) end
+- child-rox: exit(12)
+- (child-rox) try to write "child-rox"
+- (child-rox) end
+- child-rox: exit(12)
+- (rox-multichild) write "child-rox"
+- (rox-multichild) end
+- rox-multichild: exit(0)
++ initially stack pointer was 0xc0000000
++ 1 num words
++ 0 extra globbed whitespace
++ strings on stack:
++ 0xbffffff1 : rox-multichild\0
++ 
++ after alignment stack is at 0xbffffff0
++ *argv contents : 
++ 0xbfffffe8 : 0xbffffff1
++ 0xbfffffec : 0xc010808c
++ 
++ argv contents:
++ 0xbfffffe4 : 0xbfffffe8
++ 
++ argc contents
++ :0xbfffffe0 : 1
++ 
++ null terminator:
++ 0xbfffffdc : 0
++ system call no 9!
+gcc -m32 -c ../../tests/userprog/bad-read.c -o tests/userprog/bad-read.o -g -msoft-float -O -fno-stack-protector -nostdinc -I../.. -I../../lib -I../../lib/user -I. -Wall -W -Wstrict-prototypes -Wmissing-prototypes -Wsystem-headers  -MMD -MF tests/userprog/bad-read.d
+gcc -m32  -Wl,--build-id=none -nostdlib -static -Wl,-T,../../lib/user/user.lds tests/userprog/bad-read.o tests/main.o tests/lib.o lib/user/entry.o libc.a -o tests/userprog/bad-read
+pintos -v -k -T 60 --bochs  --filesys-size=2 -p tests/userprog/bad-read -a bad-read -- -q  -f run bad-read < /dev/null 2> tests/userprog/bad-read.errors > tests/userprog/bad-read.output
+perl -I../.. ../../tests/userprog/bad-read.ck tests/userprog/bad-read tests/userprog/bad-read.result
+FAIL tests/userprog/bad-read
+Test output failed to match any acceptable form.
+
+Acceptable output:
+  (bad-read) begin
+  bad-read: exit(-1)
+Differences in `diff -u' format:
+- (bad-read) begin
+- bad-read: exit(-1)
++ initially stack pointer was 0xc0000000
++ 1 num words
++ 0 extra globbed whitespace
++ strings on stack:
++ 0xbffffff7 : bad-read\0
++ 
++ after alignment stack is at 0xbffffff4
++ *argv contents : 
++ 0xbfffffec : 0xbffffff7
++ 0xbffffff0 : 0xc010808c
++ 
++ argv contents:
++ 0xbfffffe8 : 0xbfffffec
++ 
++ argc contents
++ :0xbfffffe4 : 1
++ 
++ null terminator:
++ 0xbfffffe0 : 0
++ system call no 9!
+
+(User fault messages are excluded for matching purposes.)
+gcc -m32 -c ../../tests/userprog/bad-write.c -o tests/userprog/bad-write.o -g -msoft-float -O -fno-stack-protector -nostdinc -I../.. -I../../lib -I../../lib/user -I. -Wall -W -Wstrict-prototypes -Wmissing-prototypes -Wsystem-headers  -MMD -MF tests/userprog/bad-write.d
+gcc -m32  -Wl,--build-id=none -nostdlib -static -Wl,-T,../../lib/user/user.lds tests/userprog/bad-write.o tests/main.o tests/lib.o lib/user/entry.o libc.a -o tests/userprog/bad-write
+pintos -v -k -T 60 --bochs  --filesys-size=2 -p tests/userprog/bad-write -a bad-write -- -q  -f run bad-write < /dev/null 2> tests/userprog/bad-write.errors > tests/userprog/bad-write.output
+perl -I../.. ../../tests/userprog/bad-write.ck tests/userprog/bad-write tests/userprog/bad-write.result
+FAIL tests/userprog/bad-write
+Test output failed to match any acceptable form.
+
+Acceptable output:
+  (bad-write) begin
+  bad-write: exit(-1)
+Differences in `diff -u' format:
+- (bad-write) begin
+- bad-write: exit(-1)
++ initially stack pointer was 0xc0000000
++ 1 num words
++ 0 extra globbed whitespace
++ strings on stack:
++ 0xbffffff6 : bad-write\0
++ 
++ after alignment stack is at 0xbffffff4
++ *argv contents : 
++ 0xbfffffec : 0xbffffff6
++ 0xbffffff0 : 0xc010808c
++ 
++ argv contents:
++ 0xbfffffe8 : 0xbfffffec
++ 
++ argc contents
++ :0xbfffffe4 : 1
++ 
++ null terminator:
++ 0xbfffffe0 : 0
++ system call no 9!
+
+(User fault messages are excluded for matching purposes.)
+gcc -m32 -c ../../tests/userprog/bad-read2.c -o tests/userprog/bad-read2.o -g -msoft-float -O -fno-stack-protector -nostdinc -I../.. -I../../lib -I../../lib/user -I. -Wall -W -Wstrict-prototypes -Wmissing-prototypes -Wsystem-headers  -MMD -MF tests/userprog/bad-read2.d
+gcc -m32  -Wl,--build-id=none -nostdlib -static -Wl,-T,../../lib/user/user.lds tests/userprog/bad-read2.o tests/main.o tests/lib.o lib/user/entry.o libc.a -o tests/userprog/bad-read2
+pintos -v -k -T 60 --bochs  --filesys-size=2 -p tests/userprog/bad-read2 -a bad-read2 -- -q  -f run bad-read2 < /dev/null 2> tests/userprog/bad-read2.errors > tests/userprog/bad-read2.output
+perl -I../.. ../../tests/userprog/bad-read2.ck tests/userprog/bad-read2 tests/userprog/bad-read2.result
+FAIL tests/userprog/bad-read2
+Test output failed to match any acceptable form.
+
+Acceptable output:
+  (bad-read2) begin
+  bad-read2: exit(-1)
+Differences in `diff -u' format:
+- (bad-read2) begin
+- bad-read2: exit(-1)
++ initially stack pointer was 0xc0000000
++ 1 num words
++ 0 extra globbed whitespace
++ strings on stack:
++ 0xbffffff6 : bad-read2\0
++ 
++ after alignment stack is at 0xbffffff4
++ *argv contents : 
++ 0xbfffffec : 0xbffffff6
++ 0xbffffff0 : 0xc010808c
++ 
++ argv contents:
++ 0xbfffffe8 : 0xbfffffec
++ 
++ argc contents
++ :0xbfffffe4 : 1
++ 
++ null terminator:
++ 0xbfffffe0 : 0
++ system call no 9!
+
+(User fault messages are excluded for matching purposes.)
+gcc -m32 -c ../../tests/userprog/bad-write2.c -o tests/userprog/bad-write2.o -g -msoft-float -O -fno-stack-protector -nostdinc -I../.. -I../../lib -I../../lib/user -I. -Wall -W -Wstrict-prototypes -Wmissing-prototypes -Wsystem-headers  -MMD -MF tests/userprog/bad-write2.d
+gcc -m32  -Wl,--build-id=none -nostdlib -static -Wl,-T,../../lib/user/user.lds tests/userprog/bad-write2.o tests/main.o tests/lib.o lib/user/entry.o libc.a -o tests/userprog/bad-write2
+pintos -v -k -T 60 --bochs  --filesys-size=2 -p tests/userprog/bad-write2 -a bad-write2 -- -q  -f run bad-write2 < /dev/null 2> tests/userprog/bad-write2.errors > tests/userprog/bad-write2.output
+perl -I../.. ../../tests/userprog/bad-write2.ck tests/userprog/bad-write2 tests/userprog/bad-write2.result
+FAIL tests/userprog/bad-write2
+Test output failed to match any acceptable form.
+
+Acceptable output:
+  (bad-write2) begin
+  bad-write2: exit(-1)
+Differences in `diff -u' format:
+- (bad-write2) begin
+- bad-write2: exit(-1)
++ initially stack pointer was 0xc0000000
++ 1 num words
++ 0 extra globbed whitespace
++ strings on stack:
++ 0xbffffff5 : bad-write2\0
++ 
++ after alignment stack is at 0xbffffff4
++ *argv contents : 
++ 0xbfffffec : 0xbffffff5
++ 0xbffffff0 : 0xc010808c
++ 
++ argv contents:
++ 0xbfffffe8 : 0xbfffffec
++ 
++ argc contents
++ :0xbfffffe4 : 1
++ 
++ null terminator:
++ 0xbfffffe0 : 0
++ system call no 9!
+
+(User fault messages are excluded for matching purposes.)
+gcc -m32 -c ../../tests/userprog/bad-jump.c -o tests/userprog/bad-jump.o -g -msoft-float -O -fno-stack-protector -nostdinc -I../.. -I../../lib -I../../lib/user -I. -Wall -W -Wstrict-prototypes -Wmissing-prototypes -Wsystem-headers  -MMD -MF tests/userprog/bad-jump.d
+gcc -m32  -Wl,--build-id=none -nostdlib -static -Wl,-T,../../lib/user/user.lds tests/userprog/bad-jump.o tests/main.o tests/lib.o lib/user/entry.o libc.a -o tests/userprog/bad-jump
+pintos -v -k -T 60 --bochs  --filesys-size=2 -p tests/userprog/bad-jump -a bad-jump -- -q  -f run bad-jump < /dev/null 2> tests/userprog/bad-jump.errors > tests/userprog/bad-jump.output
+perl -I../.. ../../tests/userprog/bad-jump.ck tests/userprog/bad-jump tests/userprog/bad-jump.result
+FAIL tests/userprog/bad-jump
+Test output failed to match any acceptable form.
+
+Acceptable output:
+  (bad-jump) begin
+  bad-jump: exit(-1)
+Differences in `diff -u' format:
+- (bad-jump) begin
+- bad-jump: exit(-1)
++ initially stack pointer was 0xc0000000
++ 1 num words
++ 0 extra globbed whitespace
++ strings on stack:
++ 0xbffffff7 : bad-jump\0
++ 
++ after alignment stack is at 0xbffffff4
++ *argv contents : 
++ 0xbfffffec : 0xbffffff7
++ 0xbffffff0 : 0xc010808c
++ 
++ argv contents:
++ 0xbfffffe8 : 0xbfffffec
++ 
++ argc contents
++ :0xbfffffe4 : 1
++ 
++ null terminator:
++ 0xbfffffe0 : 0
++ system call no 9!
+
+(User fault messages are excluded for matching purposes.)
+gcc -m32 -c ../../tests/userprog/bad-jump2.c -o tests/userprog/bad-jump2.o -g -msoft-float -O -fno-stack-protector -nostdinc -I../.. -I../../lib -I../../lib/user -I. -Wall -W -Wstrict-prototypes -Wmissing-prototypes -Wsystem-headers  -MMD -MF tests/userprog/bad-jump2.d
+gcc -m32  -Wl,--build-id=none -nostdlib -static -Wl,-T,../../lib/user/user.lds tests/userprog/bad-jump2.o tests/main.o tests/lib.o lib/user/entry.o libc.a -o tests/userprog/bad-jump2
+pintos -v -k -T 60 --bochs  --filesys-size=2 -p tests/userprog/bad-jump2 -a bad-jump2 -- -q  -f run bad-jump2 < /dev/null 2> tests/userprog/bad-jump2.errors > tests/userprog/bad-jump2.output
+perl -I../.. ../../tests/userprog/bad-jump2.ck tests/userprog/bad-jump2 tests/userprog/bad-jump2.result
+FAIL tests/userprog/bad-jump2
+Test output failed to match any acceptable form.
+
+Acceptable output:
+  (bad-jump2) begin
+  bad-jump2: exit(-1)
+Differences in `diff -u' format:
+- (bad-jump2) begin
+- bad-jump2: exit(-1)
++ initially stack pointer was 0xc0000000
++ 1 num words
++ 0 extra globbed whitespace
++ strings on stack:
++ 0xbffffff6 : bad-jump2\0
++ 
++ after alignment stack is at 0xbffffff4
++ *argv contents : 
++ 0xbfffffec : 0xbffffff6
++ 0xbffffff0 : 0xc010808c
++ 
++ argv contents:
++ 0xbfffffe8 : 0xbfffffec
++ 
++ argc contents
++ :0xbfffffe4 : 1
++ 
++ null terminator:
++ 0xbfffffe0 : 0
++ system call no 9!
+
+(User fault messages are excluded for matching purposes.)
+gcc -m32 -c ../../tests/userprog/multi-join.c -o tests/userprog/multi-join.o -g -msoft-float -O -fno-stack-protector -nostdinc -I../.. -I../../lib -I../../lib/user -I. -Wall -W -Wstrict-prototypes -Wmissing-prototypes -Wsystem-headers  -MMD -MF tests/userprog/multi-join.d
+gcc -m32  -Wl,--build-id=none -nostdlib -static -Wl,-T,../../lib/user/user.lds tests/userprog/multi-join.o tests/lib.o lib/user/entry.o libc.a -o tests/userprog/multi-join
+pintos -v -k -T 60 --bochs  --filesys-size=2 -p tests/userprog/multi-join -a multi-join -- -q  -f run multi-join < /dev/null 2> tests/userprog/multi-join.errors > tests/userprog/multi-join.output
+perl -I../.. ../../tests/userprog/multi-join.ck tests/userprog/multi-join tests/userprog/multi-join.result
+FAIL tests/userprog/multi-join
+Test output failed to match any acceptable form.
+
+Acceptable output:
+  (multi-join) begin
+  (multi-join) Child about to sleep
+  (multi-join) Child about to terminate
+  (multi-join) Child finished
+  (multi-join) end
+  multi-join: exit(0)
+Differences in `diff -u' format:
+- (multi-join) begin
+- (multi-join) Child about to sleep
+- (multi-join) Child about to terminate
+- (multi-join) Child finished
+- (multi-join) end
+- multi-join: exit(0)
++ initially stack pointer was 0xc0000000
++ 1 num words
++ 0 extra globbed whitespace
++ strings on stack:
++ 0xbffffff5 : multi-join\0
++ 
++ after alignment stack is at 0xbffffff4
++ *argv contents : 
++ 0xbfffffec : 0xbffffff5
++ 0xbffffff0 : 0xc010808c
++ 
++ argv contents:
++ 0xbfffffe8 : 0xbfffffec
++ 
++ argc contents
++ :0xbfffffe4 : 1
++ 
++ null terminator:
++ 0xbfffffe0 : 0
++ system call no 9!
+gcc -m32 -c ../../tests/userprog/multi-joinall.c -o tests/userprog/multi-joinall.o -g -msoft-float -O -fno-stack-protector -nostdinc -I../.. -I../../lib -I../../lib/user -I. -Wall -W -Wstrict-prototypes -Wmissing-prototypes -Wsystem-headers  -MMD -MF tests/userprog/multi-joinall.d
+gcc -m32  -Wl,--build-id=none -nostdlib -static -Wl,-T,../../lib/user/user.lds tests/userprog/multi-joinall.o tests/lib.o lib/user/entry.o libc.a -o tests/userprog/multi-joinall
+pintos -v -k -T 60 --bochs  --filesys-size=2 -p tests/userprog/multi-joinall -a multi-joinall -- -q  -f run multi-joinall < /dev/null 2> tests/userprog/multi-joinall.errors > tests/userprog/multi-joinall.output
+perl -I../.. ../../tests/userprog/multi-joinall.ck tests/userprog/multi-joinall tests/userprog/multi-joinall.result
+FAIL tests/userprog/multi-joinall
+Test output failed to match any acceptable form.
+
+Acceptable output:
+  (multi-joinall) begin
+  (multi-joinall) Thread about to terminate
+  (multi-joinall) Thread about to terminate
+  (multi-joinall) Main is finishing
+  (multi-joinall) end
+  multi-joinall: exit(0)
+Differences in `diff -u' format:
+- (multi-joinall) begin
+- (multi-joinall) Thread about to terminate
+- (multi-joinall) Thread about to terminate
+- (multi-joinall) Main is finishing
+- (multi-joinall) end
+- multi-joinall: exit(0)
++ initially stack pointer was 0xc0000000
++ 1 num words
++ 0 extra globbed whitespace
++ strings on stack:
++ 0xbffffff2 : multi-joinall\0
++ 
++ after alignment stack is at 0xbffffff0
++ *argv contents : 
++ 0xbfffffe8 : 0xbffffff2
++ 0xbfffffec : 0xc010808c
++ 
++ argv contents:
++ 0xbfffffe4 : 0xbfffffe8
++ 
++ argc contents
++ :0xbfffffe0 : 1
++ 
++ null terminator:
++ 0xbfffffdc : 0
++ system call no 9!
+gcc -m32 -c ../../tests/userprog/multi-exit.c -o tests/userprog/multi-exit.o -g -msoft-float -O -fno-stack-protector -nostdinc -I../.. -I../../lib -I../../lib/user -I. -Wall -W -Wstrict-prototypes -Wmissing-prototypes -Wsystem-headers  -MMD -MF tests/userprog/multi-exit.d
+gcc -m32  -Wl,--build-id=none -nostdlib -static -Wl,-T,../../lib/user/user.lds tests/userprog/multi-exit.o tests/lib.o lib/user/entry.o libc.a -o tests/userprog/multi-exit
+pintos -v -k -T 60 --bochs  --filesys-size=2 -p tests/userprog/multi-exit -a multi-exit -- -q  -f run multi-exit < /dev/null 2> tests/userprog/multi-exit.errors > tests/userprog/multi-exit.output
+perl -I../.. ../../tests/userprog/multi-exit.ck tests/userprog/multi-exit tests/userprog/multi-exit.result
+FAIL tests/userprog/multi-exit
+Test output failed to match any acceptable form.
+
+Acceptable output:
+  (multi-exit) begin
+  (multi-exit) end
+  multi-exit: exit(0)
+Differences in `diff -u' format:
+- (multi-exit) begin
+- (multi-exit) end
+- multi-exit: exit(0)
++ initially stack pointer was 0xc0000000
++ 1 num words
++ 0 extra globbed whitespace
++ strings on stack:
++ 0xbffffff5 : multi-exit\0
++ 
++ after alignment stack is at 0xbffffff4
++ *argv contents : 
++ 0xbfffffec : 0xbffffff5
++ 0xbffffff0 : 0xc010808c
++ 
++ argv contents:
++ 0xbfffffe8 : 0xbfffffec
++ 
++ argc contents
++ :0xbfffffe4 : 1
++ 
++ null terminator:
++ 0xbfffffe0 : 0
++ system call no 9!
+gcc -m32 -c ../../tests/userprog/multi-exit-m.c -o tests/userprog/multi-exit-m.o -g -msoft-float -O -fno-stack-protector -nostdinc -I../.. -I../../lib -I../../lib/user -I. -Wall -W -Wstrict-prototypes -Wmissing-prototypes -Wsystem-headers  -MMD -MF tests/userprog/multi-exit-m.d
+gcc -m32  -Wl,--build-id=none -nostdlib -static -Wl,-T,../../lib/user/user.lds tests/userprog/multi-exit-m.o tests/lib.o lib/user/entry.o libc.a -o tests/userprog/multi-exit-m
+pintos -v -k -T 60 --bochs  --filesys-size=2 -p tests/userprog/multi-exit-m -a multi-exit-m -- -q  -f run multi-exit-m < /dev/null 2> tests/userprog/multi-exit-m.errors > tests/userprog/multi-exit-m.output
+perl -I../.. ../../tests/userprog/multi-exit-m.ck tests/userprog/multi-exit-m tests/userprog/multi-exit-m.result
+FAIL tests/userprog/multi-exit-m
+Test output failed to match any acceptable form.
+
+Acceptable output:
+  (multi-exit-m) begin
+  (multi-exit-m) end
+  multi-exit-m: exit(0)
+Differences in `diff -u' format:
+- (multi-exit-m) begin
+- (multi-exit-m) end
+- multi-exit-m: exit(0)
++ initially stack pointer was 0xc0000000
++ 1 num words
++ 0 extra globbed whitespace
++ strings on stack:
++ 0xbffffff3 : multi-exit-m\0
++ 
++ after alignment stack is at 0xbffffff0
++ *argv contents : 
++ 0xbfffffe8 : 0xbffffff3
++ 0xbfffffec : 0xc010808c
++ 
++ argv contents:
++ 0xbfffffe4 : 0xbfffffe8
++ 
++ argc contents
++ :0xbfffffe0 : 1
++ 
++ null terminator:
++ 0xbfffffdc : 0
++ system call no 9!
+gcc -m32 -c ../../tests/userprog/multi-pid.c -o tests/userprog/multi-pid.o -g -msoft-float -O -fno-stack-protector -nostdinc -I../.. -I../../lib -I../../lib/user -I. -Wall -W -Wstrict-prototypes -Wmissing-prototypes -Wsystem-headers  -MMD -MF tests/userprog/multi-pid.d
+gcc -m32  -Wl,--build-id=none -nostdlib -static -Wl,-T,../../lib/user/user.lds tests/userprog/multi-pid.o tests/lib.o lib/user/entry.o libc.a -o tests/userprog/multi-pid
+pintos -v -k -T 60 --bochs  --filesys-size=2 -p tests/userprog/multi-pid -a multi-pid -- -q  -f run multi-pid < /dev/null 2> tests/userprog/multi-pid.errors > tests/userprog/multi-pid.output
+perl -I../.. ../../tests/userprog/multi-pid.ck tests/userprog/multi-pid tests/userprog/multi-pid.result
+FAIL tests/userprog/multi-pid
+Test output failed to match any acceptable form.
+
+Acceptable output:
+  (multi-pid) begin
+  (multi-pid) end
+  multi-pid: exit(0)
+Differences in `diff -u' format:
+- (multi-pid) begin
+- (multi-pid) end
+- multi-pid: exit(0)
++ initially stack pointer was 0xc0000000
++ 1 num words
++ 0 extra globbed whitespace
++ strings on stack:
++ 0xbffffff6 : multi-pid\0
++ 
++ after alignment stack is at 0xbffffff4
++ *argv contents : 
++ 0xbfffffec : 0xbffffff6
++ 0xbffffff0 : 0xc010808c
++ 
++ argv contents:
++ 0xbfffffe8 : 0xbfffffec
++ 
++ argc contents
++ :0xbfffffe4 : 1
++ 
++ null terminator:
++ 0xbfffffe0 : 0
++ system call no 9!
+gcc -m32 -c ../../tests/userprog/multi-tid.c -o tests/userprog/multi-tid.o -g -msoft-float -O -fno-stack-protector -nostdinc -I../.. -I../../lib -I../../lib/user -I. -Wall -W -Wstrict-prototypes -Wmissing-prototypes -Wsystem-headers  -MMD -MF tests/userprog/multi-tid.d
+gcc -m32  -Wl,--build-id=none -nostdlib -static -Wl,-T,../../lib/user/user.lds tests/userprog/multi-tid.o tests/lib.o lib/user/entry.o libc.a -o tests/userprog/multi-tid
+pintos -v -k -T 60 --bochs  --filesys-size=2 -p tests/userprog/multi-tid -a multi-tid -- -q  -f run multi-tid < /dev/null 2> tests/userprog/multi-tid.errors > tests/userprog/multi-tid.output
+perl -I../.. ../../tests/userprog/multi-tid.ck tests/userprog/multi-tid tests/userprog/multi-tid.result
+FAIL tests/userprog/multi-tid
+Test output failed to match any acceptable form.
+
+Acceptable output:
+  (multi-tid) begin
+  (multi-tid) end
+  multi-tid: exit(0)
+Differences in `diff -u' format:
+- (multi-tid) begin
+- (multi-tid) end
+- multi-tid: exit(0)
++ initially stack pointer was 0xc0000000
++ 1 num words
++ 0 extra globbed whitespace
++ strings on stack:
++ 0xbffffff6 : multi-tid\0
++ 
++ after alignment stack is at 0xbffffff4
++ *argv contents : 
++ 0xbfffffec : 0xbffffff6
++ 0xbffffff0 : 0xc010808c
++ 
++ argv contents:
++ 0xbfffffe8 : 0xbfffffec
++ 
++ argc contents
++ :0xbfffffe4 : 1
++ 
++ null terminator:
++ 0xbfffffe0 : 0
++ system call no 9!
+gcc -m32 -c ../../tests/userprog/multi-crit.c -o tests/userprog/multi-crit.o -g -msoft-float -O -fno-stack-protector -nostdinc -I../.. -I../../lib -I../../lib/user -I. -Wall -W -Wstrict-prototypes -Wmissing-prototypes -Wsystem-headers  -MMD -MF tests/userprog/multi-crit.d
+gcc -m32  -Wl,--build-id=none -nostdlib -static -Wl,-T,../../lib/user/user.lds tests/userprog/multi-crit.o tests/lib.o lib/user/entry.o libc.a -o tests/userprog/multi-crit
+pintos -v -k -T 60 --bochs  --filesys-size=2 -p tests/userprog/multi-crit -a multi-crit -- -q  -f run multi-crit < /dev/null 2> tests/userprog/multi-crit.errors > tests/userprog/multi-crit.output
+perl -I../.. ../../tests/userprog/multi-crit.ck tests/userprog/multi-crit tests/userprog/multi-crit.result
+FAIL tests/userprog/multi-crit
+Test output failed to match any acceptable form.
+
+Acceptable output:
+  (multi-crit) begin
+  (multi-crit) end
+  multi-crit: exit(0)
+Differences in `diff -u' format:
+- (multi-crit) begin
+- (multi-crit) end
+- multi-crit: exit(0)
++ initially stack pointer was 0xc0000000
++ 1 num words
++ 0 extra globbed whitespace
++ strings on stack:
++ 0xbffffff5 : multi-crit\0
++ 
++ after alignment stack is at 0xbffffff4
++ *argv contents : 
++ 0xbfffffec : 0xbffffff5
++ 0xbffffff0 : 0xc010808c
++ 
++ argv contents:
++ 0xbfffffe8 : 0xbfffffec
++ 
++ argc contents
++ :0xbfffffe4 : 1
++ 
++ null terminator:
++ 0xbfffffe0 : 0
++ system call no 9!
+gcc -m32 -c ../../tests/userprog/no-vm/multi-oom.c -o tests/userprog/no-vm/multi-oom.o -g -msoft-float -O -fno-stack-protector -nostdinc -I../.. -I../../lib -I../../lib/user -I. -Wall -W -Wstrict-prototypes -Wmissing-prototypes -Wsystem-headers  -MMD -MF tests/userprog/no-vm/multi-oom.d
+gcc -m32  -Wl,--build-id=none -nostdlib -static -Wl,-T,../../lib/user/user.lds tests/userprog/no-vm/multi-oom.o tests/lib.o lib/user/entry.o libc.a -o tests/userprog/no-vm/multi-oom
+pintos -v -k -T 360 --bochs  --filesys-size=2 -p tests/userprog/no-vm/multi-oom -a multi-oom -- -q  -f run multi-oom < /dev/null 2> tests/userprog/no-vm/multi-oom.errors > tests/userprog/no-vm/multi-oom.output
+perl -I../.. ../../tests/userprog/no-vm/multi-oom.ck tests/userprog/no-vm/multi-oom tests/userprog/no-vm/multi-oom.result
+FAIL tests/userprog/no-vm/multi-oom
+Test output failed to match any acceptable form.
+
+Acceptable output:
+  (multi-oom) begin
+  (multi-oom) success. program forked 10 times.
+  (multi-oom) end
+Differences in `diff -u' format:
+- (multi-oom) begin
+- (multi-oom) success. program forked 10 times.
+- (multi-oom) end
++ initially stack pointer was 0xc0000000
++ 1 num words
++ 0 extra globbed whitespace
++ strings on stack:
++ 0xbffffff6 : multi-oom\0
++ 
++ after alignment stack is at 0xbffffff4
++ *argv contents : 
++ 0xbfffffec : 0xbffffff6
++ 0xbffffff0 : 0xc010808c
++ 
++ argv contents:
++ 0xbfffffe8 : 0xbfffffec
++ 
++ argc contents
++ :0xbfffffe4 : 1
++ 
++ null terminator:
++ 0xbfffffe0 : 0
++ system call no 9!
+
+(Process exit codes are excluded for matching purposes.)
+
+(User fault messages are excluded for matching purposes.)
+gcc -m32 -c ../../tests/filesys/base/lg-create.c -o tests/filesys/base/lg-create.o -g -msoft-float -O -fno-stack-protector -nostdinc -I../.. -I../../lib -I../../lib/user -I. -Wall -W -Wstrict-prototypes -Wmissing-prototypes -Wsystem-headers  -MMD -MF tests/filesys/base/lg-create.d
+gcc -m32 -c ../../tests/filesys/seq-test.c -o tests/filesys/seq-test.o -g -msoft-float -O -fno-stack-protector -nostdinc -I../.. -I../../lib -I../../lib/user -I. -Wall -W -Wstrict-prototypes -Wmissing-prototypes -Wsystem-headers  -MMD -MF tests/filesys/seq-test.d
+gcc -m32  -Wl,--build-id=none -nostdlib -static -Wl,-T,../../lib/user/user.lds tests/filesys/base/lg-create.o tests/lib.o tests/filesys/seq-test.o tests/main.o lib/user/entry.o libc.a -o tests/filesys/base/lg-create
+pintos -v -k -T 60 --bochs  --filesys-size=2 -p tests/filesys/base/lg-create -a lg-create -- -q  -f run lg-create < /dev/null 2> tests/filesys/base/lg-create.errors > tests/filesys/base/lg-create.output
+perl -I../.. ../../tests/filesys/base/lg-create.ck tests/filesys/base/lg-create tests/filesys/base/lg-create.result
+FAIL tests/filesys/base/lg-create
+Test output failed to match any acceptable form.
+
+Acceptable output:
+  (lg-create) begin
+  (lg-create) create "blargle"
+  (lg-create) open "blargle" for verification
+  (lg-create) verified contents of "blargle"
+  (lg-create) close "blargle"
+  (lg-create) end
+Differences in `diff -u' format:
+- (lg-create) begin
+- (lg-create) create "blargle"
+- (lg-create) open "blargle" for verification
+- (lg-create) verified contents of "blargle"
+- (lg-create) close "blargle"
+- (lg-create) end
++ initially stack pointer was 0xc0000000
++ 1 num words
++ 0 extra globbed whitespace
++ strings on stack:
++ 0xbffffff6 : lg-create\0
++ 
++ after alignment stack is at 0xbffffff4
++ *argv contents : 
++ 0xbfffffec : 0xbffffff6
++ 0xbffffff0 : 0xc010808c
++ 
++ argv contents:
++ 0xbfffffe8 : 0xbfffffec
++ 
++ argc contents
++ :0xbfffffe4 : 1
++ 
++ null terminator:
++ 0xbfffffe0 : 0
++ system call no 9!
+
+(Process exit codes are excluded for matching purposes.)
+gcc -m32 -c ../../tests/filesys/base/lg-full.c -o tests/filesys/base/lg-full.o -g -msoft-float -O -fno-stack-protector -nostdinc -I../.. -I../../lib -I../../lib/user -I. -Wall -W -Wstrict-prototypes -Wmissing-prototypes -Wsystem-headers  -MMD -MF tests/filesys/base/lg-full.d
+gcc -m32  -Wl,--build-id=none -nostdlib -static -Wl,-T,../../lib/user/user.lds tests/filesys/base/lg-full.o tests/lib.o tests/filesys/seq-test.o tests/main.o lib/user/entry.o libc.a -o tests/filesys/base/lg-full
+pintos -v -k -T 60 --bochs  --filesys-size=2 -p tests/filesys/base/lg-full -a lg-full -- -q  -f run lg-full < /dev/null 2> tests/filesys/base/lg-full.errors > tests/filesys/base/lg-full.output
+perl -I../.. ../../tests/filesys/base/lg-full.ck tests/filesys/base/lg-full tests/filesys/base/lg-full.result
+FAIL tests/filesys/base/lg-full
+Test output failed to match any acceptable form.
+
+Acceptable output:
+  (lg-full) begin
+  (lg-full) create "quux"
+  (lg-full) open "quux"
+  (lg-full) writing "quux"
+  (lg-full) close "quux"
+  (lg-full) open "quux" for verification
+  (lg-full) verified contents of "quux"
+  (lg-full) close "quux"
+  (lg-full) end
+Differences in `diff -u' format:
+- (lg-full) begin
+- (lg-full) create "quux"
+- (lg-full) open "quux"
+- (lg-full) writing "quux"
+- (lg-full) close "quux"
+- (lg-full) open "quux" for verification
+- (lg-full) verified contents of "quux"
+- (lg-full) close "quux"
+- (lg-full) end
++ initially stack pointer was 0xc0000000
++ 1 num words
++ 0 extra globbed whitespace
++ strings on stack:
++ 0xbffffff8 : lg-full\0
++ 
++ after alignment stack is at 0xbffffff8
++ *argv contents : 
++ 0xbffffff0 : 0xbffffff8
++ 0xbffffff4 : 0xc010808c
++ 
++ argv contents:
++ 0xbfffffec : 0xbffffff0
++ 
++ argc contents
++ :0xbfffffe8 : 1
++ 
++ null terminator:
++ 0xbfffffe4 : 0
++ system call no 9!
+
+(Process exit codes are excluded for matching purposes.)
+gcc -m32 -c ../../tests/filesys/base/lg-random.c -o tests/filesys/base/lg-random.o -g -msoft-float -O -fno-stack-protector -nostdinc -I../.. -I../../lib -I../../lib/user -I. -Wall -W -Wstrict-prototypes -Wmissing-prototypes -Wsystem-headers  -MMD -MF tests/filesys/base/lg-random.d
+gcc -m32  -Wl,--build-id=none -nostdlib -static -Wl,-T,../../lib/user/user.lds tests/filesys/base/lg-random.o tests/lib.o tests/filesys/seq-test.o tests/main.o lib/user/entry.o libc.a -o tests/filesys/base/lg-random
+pintos -v -k -T 60 --bochs  --filesys-size=2 -p tests/filesys/base/lg-random -a lg-random -- -q  -f run lg-random < /dev/null 2> tests/filesys/base/lg-random.errors > tests/filesys/base/lg-random.output
+perl -I../.. ../../tests/filesys/base/lg-random.ck tests/filesys/base/lg-random tests/filesys/base/lg-random.result
+FAIL tests/filesys/base/lg-random
+Test output failed to match any acceptable form.
+
+Acceptable output:
+  (lg-random) begin
+  (lg-random) create "bazzle"
+  (lg-random) open "bazzle"
+  (lg-random) write "bazzle" in random order
+  (lg-random) read "bazzle" in random order
+  (lg-random) close "bazzle"
+  (lg-random) end
+Differences in `diff -u' format:
+- (lg-random) begin
+- (lg-random) create "bazzle"
+- (lg-random) open "bazzle"
+- (lg-random) write "bazzle" in random order
+- (lg-random) read "bazzle" in random order
+- (lg-random) close "bazzle"
+- (lg-random) end
++ initially stack pointer was 0xc0000000
++ 1 num words
++ 0 extra globbed whitespace
++ strings on stack:
++ 0xbffffff6 : lg-random\0
++ 
++ after alignment stack is at 0xbffffff4
++ *argv contents : 
++ 0xbfffffec : 0xbffffff6
++ 0xbffffff0 : 0xc010808c
++ 
++ argv contents:
++ 0xbfffffe8 : 0xbfffffec
++ 
++ argc contents
++ :0xbfffffe4 : 1
++ 
++ null terminator:
++ 0xbfffffe0 : 0
++ system call no 9!
+
+(Process exit codes are excluded for matching purposes.)
+gcc -m32 -c ../../tests/filesys/base/lg-seq-block.c -o tests/filesys/base/lg-seq-block.o -g -msoft-float -O -fno-stack-protector -nostdinc -I../.. -I../../lib -I../../lib/user -I. -Wall -W -Wstrict-prototypes -Wmissing-prototypes -Wsystem-headers  -MMD -MF tests/filesys/base/lg-seq-block.d
+gcc -m32  -Wl,--build-id=none -nostdlib -static -Wl,-T,../../lib/user/user.lds tests/filesys/base/lg-seq-block.o tests/lib.o tests/filesys/seq-test.o tests/main.o lib/user/entry.o libc.a -o tests/filesys/base/lg-seq-block
+pintos -v -k -T 60 --bochs  --filesys-size=2 -p tests/filesys/base/lg-seq-block -a lg-seq-block -- -q  -f run lg-seq-block < /dev/null 2> tests/filesys/base/lg-seq-block.errors > tests/filesys/base/lg-seq-block.output
+perl -I../.. ../../tests/filesys/base/lg-seq-block.ck tests/filesys/base/lg-seq-block tests/filesys/base/lg-seq-block.result
+FAIL tests/filesys/base/lg-seq-block
+Test output failed to match any acceptable form.
+
+Acceptable output:
+  (lg-seq-block) begin
+  (lg-seq-block) create "noodle"
+  (lg-seq-block) open "noodle"
+  (lg-seq-block) writing "noodle"
+  (lg-seq-block) close "noodle"
+  (lg-seq-block) open "noodle" for verification
+  (lg-seq-block) verified contents of "noodle"
+  (lg-seq-block) close "noodle"
+  (lg-seq-block) end
+Differences in `diff -u' format:
+- (lg-seq-block) begin
+- (lg-seq-block) create "noodle"
+- (lg-seq-block) open "noodle"
+- (lg-seq-block) writing "noodle"
+- (lg-seq-block) close "noodle"
+- (lg-seq-block) open "noodle" for verification
+- (lg-seq-block) verified contents of "noodle"
+- (lg-seq-block) close "noodle"
+- (lg-seq-block) end
++ initially stack pointer was 0xc0000000
++ 1 num words
++ 0 extra globbed whitespace
++ strings on stack:
++ 0xbffffff3 : lg-seq-block\0
++ 
++ after alignment stack is at 0xbffffff0
++ *argv contents : 
++ 0xbfffffe8 : 0xbffffff3
++ 0xbfffffec : 0xc010808c
++ 
++ argv contents:
++ 0xbfffffe4 : 0xbfffffe8
++ 
++ argc contents
++ :0xbfffffe0 : 1
++ 
++ null terminator:
++ 0xbfffffdc : 0
++ system call no 9!
+
+(Process exit codes are excluded for matching purposes.)
+gcc -m32 -c ../../tests/filesys/base/lg-seq-random.c -o tests/filesys/base/lg-seq-random.o -g -msoft-float -O -fno-stack-protector -nostdinc -I../.. -I../../lib -I../../lib/user -I. -Wall -W -Wstrict-prototypes -Wmissing-prototypes -Wsystem-headers  -MMD -MF tests/filesys/base/lg-seq-random.d
+gcc -m32  -Wl,--build-id=none -nostdlib -static -Wl,-T,../../lib/user/user.lds tests/filesys/base/lg-seq-random.o tests/lib.o tests/filesys/seq-test.o tests/main.o lib/user/entry.o libc.a -o tests/filesys/base/lg-seq-random
+pintos -v -k -T 60 --bochs  --filesys-size=2 -p tests/filesys/base/lg-seq-random -a lg-seq-random -- -q  -f run lg-seq-random < /dev/null 2> tests/filesys/base/lg-seq-random.errors > tests/filesys/base/lg-seq-random.output
+perl -I../.. ../../tests/filesys/base/lg-seq-random.ck tests/filesys/base/lg-seq-random tests/filesys/base/lg-seq-random.result
+FAIL tests/filesys/base/lg-seq-random
+Test output failed to match any acceptable form.
+
+Acceptable output:
+  (lg-seq-random) begin
+  (lg-seq-random) create "nibble"
+  (lg-seq-random) open "nibble"
+  (lg-seq-random) writing "nibble"
+  (lg-seq-random) close "nibble"
+  (lg-seq-random) open "nibble" for verification
+  (lg-seq-random) verified contents of "nibble"
+  (lg-seq-random) close "nibble"
+  (lg-seq-random) end
+Differences in `diff -u' format:
+- (lg-seq-random) begin
+- (lg-seq-random) create "nibble"
+- (lg-seq-random) open "nibble"
+- (lg-seq-random) writing "nibble"
+- (lg-seq-random) close "nibble"
+- (lg-seq-random) open "nibble" for verification
+- (lg-seq-random) verified contents of "nibble"
+- (lg-seq-random) close "nibble"
+- (lg-seq-random) end
++ initially stack pointer was 0xc0000000
++ 1 num words
++ 0 extra globbed whitespace
++ strings on stack:
++ 0xbffffff2 : lg-seq-random\0
++ 
++ after alignment stack is at 0xbffffff0
++ *argv contents : 
++ 0xbfffffe8 : 0xbffffff2
++ 0xbfffffec : 0xc010808c
++ 
++ argv contents:
++ 0xbfffffe4 : 0xbfffffe8
++ 
++ argc contents
++ :0xbfffffe0 : 1
++ 
++ null terminator:
++ 0xbfffffdc : 0
++ system call no 9!
+
+(Process exit codes are excluded for matching purposes.)
+gcc -m32 -c ../../tests/filesys/base/sm-create.c -o tests/filesys/base/sm-create.o -g -msoft-float -O -fno-stack-protector -nostdinc -I../.. -I../../lib -I../../lib/user -I. -Wall -W -Wstrict-prototypes -Wmissing-prototypes -Wsystem-headers  -MMD -MF tests/filesys/base/sm-create.d
+gcc -m32  -Wl,--build-id=none -nostdlib -static -Wl,-T,../../lib/user/user.lds tests/filesys/base/sm-create.o tests/lib.o tests/filesys/seq-test.o tests/main.o lib/user/entry.o libc.a -o tests/filesys/base/sm-create
+pintos -v -k -T 60 --bochs  --filesys-size=2 -p tests/filesys/base/sm-create -a sm-create -- -q  -f run sm-create < /dev/null 2> tests/filesys/base/sm-create.errors > tests/filesys/base/sm-create.output
+perl -I../.. ../../tests/filesys/base/sm-create.ck tests/filesys/base/sm-create tests/filesys/base/sm-create.result
+FAIL tests/filesys/base/sm-create
+Test output failed to match any acceptable form.
+
+Acceptable output:
+  (sm-create) begin
+  (sm-create) create "blargle"
+  (sm-create) open "blargle" for verification
+  (sm-create) verified contents of "blargle"
+  (sm-create) close "blargle"
+  (sm-create) end
+Differences in `diff -u' format:
+- (sm-create) begin
+- (sm-create) create "blargle"
+- (sm-create) open "blargle" for verification
+- (sm-create) verified contents of "blargle"
+- (sm-create) close "blargle"
+- (sm-create) end
++ initially stack pointer was 0xc0000000
++ 1 num words
++ 0 extra globbed whitespace
++ strings on stack:
++ 0xbffffff6 : sm-create\0
++ 
++ after alignment stack is at 0xbffffff4
++ *argv contents : 
++ 0xbfffffec : 0xbffffff6
++ 0xbffffff0 : 0xc010808c
++ 
++ argv contents:
++ 0xbfffffe8 : 0xbfffffec
++ 
++ argc contents
++ :0xbfffffe4 : 1
++ 
++ null terminator:
++ 0xbfffffe0 : 0
++ system call no 9!
+
+(Process exit codes are excluded for matching purposes.)
+gcc -m32 -c ../../tests/filesys/base/sm-full.c -o tests/filesys/base/sm-full.o -g -msoft-float -O -fno-stack-protector -nostdinc -I../.. -I../../lib -I../../lib/user -I. -Wall -W -Wstrict-prototypes -Wmissing-prototypes -Wsystem-headers  -MMD -MF tests/filesys/base/sm-full.d
+gcc -m32  -Wl,--build-id=none -nostdlib -static -Wl,-T,../../lib/user/user.lds tests/filesys/base/sm-full.o tests/lib.o tests/filesys/seq-test.o tests/main.o lib/user/entry.o libc.a -o tests/filesys/base/sm-full
+pintos -v -k -T 60 --bochs  --filesys-size=2 -p tests/filesys/base/sm-full -a sm-full -- -q  -f run sm-full < /dev/null 2> tests/filesys/base/sm-full.errors > tests/filesys/base/sm-full.output
+perl -I../.. ../../tests/filesys/base/sm-full.ck tests/filesys/base/sm-full tests/filesys/base/sm-full.result
+FAIL tests/filesys/base/sm-full
+Test output failed to match any acceptable form.
+
+Acceptable output:
+  (sm-full) begin
+  (sm-full) create "quux"
+  (sm-full) open "quux"
+  (sm-full) writing "quux"
+  (sm-full) close "quux"
+  (sm-full) open "quux" for verification
+  (sm-full) verified contents of "quux"
+  (sm-full) close "quux"
+  (sm-full) end
+Differences in `diff -u' format:
+- (sm-full) begin
+- (sm-full) create "quux"
+- (sm-full) open "quux"
+- (sm-full) writing "quux"
+- (sm-full) close "quux"
+- (sm-full) open "quux" for verification
+- (sm-full) verified contents of "quux"
+- (sm-full) close "quux"
+- (sm-full) end
++ initially stack pointer was 0xc0000000
++ 1 num words
++ 0 extra globbed whitespace
++ strings on stack:
++ 0xbffffff8 : sm-full\0
++ 
++ after alignment stack is at 0xbffffff8
++ *argv contents : 
++ 0xbffffff0 : 0xbffffff8
++ 0xbffffff4 : 0xc010808c
++ 
++ argv contents:
++ 0xbfffffec : 0xbffffff0
++ 
++ argc contents
++ :0xbfffffe8 : 1
++ 
++ null terminator:
++ 0xbfffffe4 : 0
++ system call no 9!
+
+(Process exit codes are excluded for matching purposes.)
+gcc -m32 -c ../../tests/filesys/base/sm-random.c -o tests/filesys/base/sm-random.o -g -msoft-float -O -fno-stack-protector -nostdinc -I../.. -I../../lib -I../../lib/user -I. -Wall -W -Wstrict-prototypes -Wmissing-prototypes -Wsystem-headers  -MMD -MF tests/filesys/base/sm-random.d
+gcc -m32  -Wl,--build-id=none -nostdlib -static -Wl,-T,../../lib/user/user.lds tests/filesys/base/sm-random.o tests/lib.o tests/filesys/seq-test.o tests/main.o lib/user/entry.o libc.a -o tests/filesys/base/sm-random
+pintos -v -k -T 60 --bochs  --filesys-size=2 -p tests/filesys/base/sm-random -a sm-random -- -q  -f run sm-random < /dev/null 2> tests/filesys/base/sm-random.errors > tests/filesys/base/sm-random.output
+perl -I../.. ../../tests/filesys/base/sm-random.ck tests/filesys/base/sm-random tests/filesys/base/sm-random.result
+FAIL tests/filesys/base/sm-random
+Test output failed to match any acceptable form.
+
+Acceptable output:
+  (sm-random) begin
+  (sm-random) create "bazzle"
+  (sm-random) open "bazzle"
+  (sm-random) write "bazzle" in random order
+  (sm-random) read "bazzle" in random order
+  (sm-random) close "bazzle"
+  (sm-random) end
+Differences in `diff -u' format:
+- (sm-random) begin
+- (sm-random) create "bazzle"
+- (sm-random) open "bazzle"
+- (sm-random) write "bazzle" in random order
+- (sm-random) read "bazzle" in random order
+- (sm-random) close "bazzle"
+- (sm-random) end
++ initially stack pointer was 0xc0000000
++ 1 num words
++ 0 extra globbed whitespace
++ strings on stack:
++ 0xbffffff6 : sm-random\0
++ 
++ after alignment stack is at 0xbffffff4
++ *argv contents : 
++ 0xbfffffec : 0xbffffff6
++ 0xbffffff0 : 0xc010808c
++ 
++ argv contents:
++ 0xbfffffe8 : 0xbfffffec
++ 
++ argc contents
++ :0xbfffffe4 : 1
++ 
++ null terminator:
++ 0xbfffffe0 : 0
++ system call no 9!
+
+(Process exit codes are excluded for matching purposes.)
+gcc -m32 -c ../../tests/filesys/base/sm-seq-block.c -o tests/filesys/base/sm-seq-block.o -g -msoft-float -O -fno-stack-protector -nostdinc -I../.. -I../../lib -I../../lib/user -I. -Wall -W -Wstrict-prototypes -Wmissing-prototypes -Wsystem-headers  -MMD -MF tests/filesys/base/sm-seq-block.d
+gcc -m32  -Wl,--build-id=none -nostdlib -static -Wl,-T,../../lib/user/user.lds tests/filesys/base/sm-seq-block.o tests/lib.o tests/filesys/seq-test.o tests/main.o lib/user/entry.o libc.a -o tests/filesys/base/sm-seq-block
+pintos -v -k -T 60 --bochs  --filesys-size=2 -p tests/filesys/base/sm-seq-block -a sm-seq-block -- -q  -f run sm-seq-block < /dev/null 2> tests/filesys/base/sm-seq-block.errors > tests/filesys/base/sm-seq-block.output
+perl -I../.. ../../tests/filesys/base/sm-seq-block.ck tests/filesys/base/sm-seq-block tests/filesys/base/sm-seq-block.result
+FAIL tests/filesys/base/sm-seq-block
+Test output failed to match any acceptable form.
+
+Acceptable output:
+  (sm-seq-block) begin
+  (sm-seq-block) create "noodle"
+  (sm-seq-block) open "noodle"
+  (sm-seq-block) writing "noodle"
+  (sm-seq-block) close "noodle"
+  (sm-seq-block) open "noodle" for verification
+  (sm-seq-block) verified contents of "noodle"
+  (sm-seq-block) close "noodle"
+  (sm-seq-block) end
+Differences in `diff -u' format:
+- (sm-seq-block) begin
+- (sm-seq-block) create "noodle"
+- (sm-seq-block) open "noodle"
+- (sm-seq-block) writing "noodle"
+- (sm-seq-block) close "noodle"
+- (sm-seq-block) open "noodle" for verification
+- (sm-seq-block) verified contents of "noodle"
+- (sm-seq-block) close "noodle"
+- (sm-seq-block) end
++ initially stack pointer was 0xc0000000
++ 1 num words
++ 0 extra globbed whitespace
++ strings on stack:
++ 0xbffffff3 : sm-seq-block\0
++ 
++ after alignment stack is at 0xbffffff0
++ *argv contents : 
++ 0xbfffffe8 : 0xbffffff3
++ 0xbfffffec : 0xc010808c
++ 
++ argv contents:
++ 0xbfffffe4 : 0xbfffffe8
++ 
++ argc contents
++ :0xbfffffe0 : 1
++ 
++ null terminator:
++ 0xbfffffdc : 0
++ system call no 9!
+
+(Process exit codes are excluded for matching purposes.)
+gcc -m32 -c ../../tests/filesys/base/sm-seq-random.c -o tests/filesys/base/sm-seq-random.o -g -msoft-float -O -fno-stack-protector -nostdinc -I../.. -I../../lib -I../../lib/user -I. -Wall -W -Wstrict-prototypes -Wmissing-prototypes -Wsystem-headers  -MMD -MF tests/filesys/base/sm-seq-random.d
+gcc -m32  -Wl,--build-id=none -nostdlib -static -Wl,-T,../../lib/user/user.lds tests/filesys/base/sm-seq-random.o tests/lib.o tests/filesys/seq-test.o tests/main.o lib/user/entry.o libc.a -o tests/filesys/base/sm-seq-random
+pintos -v -k -T 60 --bochs  --filesys-size=2 -p tests/filesys/base/sm-seq-random -a sm-seq-random -- -q  -f run sm-seq-random < /dev/null 2> tests/filesys/base/sm-seq-random.errors > tests/filesys/base/sm-seq-random.output
+perl -I../.. ../../tests/filesys/base/sm-seq-random.ck tests/filesys/base/sm-seq-random tests/filesys/base/sm-seq-random.result
+FAIL tests/filesys/base/sm-seq-random
+Test output failed to match any acceptable form.
+
+Acceptable output:
+  (sm-seq-random) begin
+  (sm-seq-random) create "nibble"
+  (sm-seq-random) open "nibble"
+  (sm-seq-random) writing "nibble"
+  (sm-seq-random) close "nibble"
+  (sm-seq-random) open "nibble" for verification
+  (sm-seq-random) verified contents of "nibble"
+  (sm-seq-random) close "nibble"
+  (sm-seq-random) end
+Differences in `diff -u' format:
+- (sm-seq-random) begin
+- (sm-seq-random) create "nibble"
+- (sm-seq-random) open "nibble"
+- (sm-seq-random) writing "nibble"
+- (sm-seq-random) close "nibble"
+- (sm-seq-random) open "nibble" for verification
+- (sm-seq-random) verified contents of "nibble"
+- (sm-seq-random) close "nibble"
+- (sm-seq-random) end
++ initially stack pointer was 0xc0000000
++ 1 num words
++ 0 extra globbed whitespace
++ strings on stack:
++ 0xbffffff2 : sm-seq-random\0
++ 
++ after alignment stack is at 0xbffffff0
++ *argv contents : 
++ 0xbfffffe8 : 0xbffffff2
++ 0xbfffffec : 0xc010808c
++ 
++ argv contents:
++ 0xbfffffe4 : 0xbfffffe8
++ 
++ argc contents
++ :0xbfffffe0 : 1
++ 
++ null terminator:
++ 0xbfffffdc : 0
++ system call no 9!
+
+(Process exit codes are excluded for matching purposes.)
+gcc -m32 -c ../../tests/filesys/base/syn-read.c -o tests/filesys/base/syn-read.o -g -msoft-float -O -fno-stack-protector -nostdinc -I../.. -I../../lib -I../../lib/user -I. -Wall -W -Wstrict-prototypes -Wmissing-prototypes -Wsystem-headers  -MMD -MF tests/filesys/base/syn-read.d
+gcc -m32  -Wl,--build-id=none -nostdlib -static -Wl,-T,../../lib/user/user.lds tests/filesys/base/syn-read.o tests/lib.o tests/filesys/seq-test.o tests/main.o lib/user/entry.o libc.a -o tests/filesys/base/syn-read
+gcc -m32 -c ../../tests/filesys/base/child-syn-read.c -o tests/filesys/base/child-syn-read.o -g -msoft-float -O -fno-stack-protector -nostdinc -I../.. -I../../lib -I../../lib/user -I. -Wall -W -Wstrict-prototypes -Wmissing-prototypes -Wsystem-headers  -MMD -MF tests/filesys/base/child-syn-read.d
+gcc -m32  -Wl,--build-id=none -nostdlib -static -Wl,-T,../../lib/user/user.lds tests/filesys/base/child-syn-read.o tests/lib.o tests/filesys/seq-test.o lib/user/entry.o libc.a -o tests/filesys/base/child-syn-read
+pintos -v -k -T 300 --bochs  --filesys-size=2 -p tests/filesys/base/syn-read -a syn-read -p tests/filesys/base/child-syn-read -a child-syn-read -- -q  -f run syn-read < /dev/null 2> tests/filesys/base/syn-read.errors > tests/filesys/base/syn-read.output
+perl -I../.. ../../tests/filesys/base/syn-read.ck tests/filesys/base/syn-read tests/filesys/base/syn-read.result
+FAIL tests/filesys/base/syn-read
+Test output failed to match any acceptable form.
+
+Acceptable output:
+  (syn-read) begin
+  (syn-read) create "data"
+  (syn-read) open "data"
+  (syn-read) write "data"
+  (syn-read) close "data"
+  (syn-read) exec child 1 of 10: "child-syn-read 0"
+  (syn-read) exec child 2 of 10: "child-syn-read 1"
+  (syn-read) exec child 3 of 10: "child-syn-read 2"
+  (syn-read) exec child 4 of 10: "child-syn-read 3"
+  (syn-read) exec child 5 of 10: "child-syn-read 4"
+  (syn-read) exec child 6 of 10: "child-syn-read 5"
+  (syn-read) exec child 7 of 10: "child-syn-read 6"
+  (syn-read) exec child 8 of 10: "child-syn-read 7"
+  (syn-read) exec child 9 of 10: "child-syn-read 8"
+  (syn-read) exec child 10 of 10: "child-syn-read 9"
+  (syn-read) wait for child 1 of 10 returned 0 (expected 0)
+  (syn-read) wait for child 2 of 10 returned 1 (expected 1)
+  (syn-read) wait for child 3 of 10 returned 2 (expected 2)
+  (syn-read) wait for child 4 of 10 returned 3 (expected 3)
+  (syn-read) wait for child 5 of 10 returned 4 (expected 4)
+  (syn-read) wait for child 6 of 10 returned 5 (expected 5)
+  (syn-read) wait for child 7 of 10 returned 6 (expected 6)
+  (syn-read) wait for child 8 of 10 returned 7 (expected 7)
+  (syn-read) wait for child 9 of 10 returned 8 (expected 8)
+  (syn-read) wait for child 10 of 10 returned 9 (expected 9)
+  (syn-read) end
+Differences in `diff -u' format:
+- (syn-read) begin
+- (syn-read) create "data"
+- (syn-read) open "data"
+- (syn-read) write "data"
+- (syn-read) close "data"
+- (syn-read) exec child 1 of 10: "child-syn-read 0"
+- (syn-read) exec child 2 of 10: "child-syn-read 1"
+- (syn-read) exec child 3 of 10: "child-syn-read 2"
+- (syn-read) exec child 4 of 10: "child-syn-read 3"
+- (syn-read) exec child 5 of 10: "child-syn-read 4"
+- (syn-read) exec child 6 of 10: "child-syn-read 5"
+- (syn-read) exec child 7 of 10: "child-syn-read 6"
+- (syn-read) exec child 8 of 10: "child-syn-read 7"
+- (syn-read) exec child 9 of 10: "child-syn-read 8"
+- (syn-read) exec child 10 of 10: "child-syn-read 9"
+- (syn-read) wait for child 1 of 10 returned 0 (expected 0)
+- (syn-read) wait for child 2 of 10 returned 1 (expected 1)
+- (syn-read) wait for child 3 of 10 returned 2 (expected 2)
+- (syn-read) wait for child 4 of 10 returned 3 (expected 3)
+- (syn-read) wait for child 5 of 10 returned 4 (expected 4)
+- (syn-read) wait for child 6 of 10 returned 5 (expected 5)
+- (syn-read) wait for child 7 of 10 returned 6 (expected 6)
+- (syn-read) wait for child 8 of 10 returned 7 (expected 7)
+- (syn-read) wait for child 9 of 10 returned 8 (expected 8)
+- (syn-read) wait for child 10 of 10 returned 9 (expected 9)
+- (syn-read) end
++ initially stack pointer was 0xc0000000
++ 1 num words
++ 0 extra globbed whitespace
++ strings on stack:
++ 0xbffffff7 : syn-read\0
++ 
++ after alignment stack is at 0xbffffff4
++ *argv contents : 
++ 0xbfffffec : 0xbffffff7
++ 0xbffffff0 : 0xc010808c
++ 
++ argv contents:
++ 0xbfffffe8 : 0xbfffffec
++ 
++ argc contents
++ :0xbfffffe4 : 1
++ 
++ null terminator:
++ 0xbfffffe0 : 0
++ system call no 9!
+
+(Process exit codes are excluded for matching purposes.)
+gcc -m32 -c ../../tests/filesys/base/syn-remove.c -o tests/filesys/base/syn-remove.o -g -msoft-float -O -fno-stack-protector -nostdinc -I../.. -I../../lib -I../../lib/user -I. -Wall -W -Wstrict-prototypes -Wmissing-prototypes -Wsystem-headers  -MMD -MF tests/filesys/base/syn-remove.d
+gcc -m32  -Wl,--build-id=none -nostdlib -static -Wl,-T,../../lib/user/user.lds tests/filesys/base/syn-remove.o tests/lib.o tests/filesys/seq-test.o tests/main.o lib/user/entry.o libc.a -o tests/filesys/base/syn-remove
+pintos -v -k -T 60 --bochs  --filesys-size=2 -p tests/filesys/base/syn-remove -a syn-remove -- -q  -f run syn-remove < /dev/null 2> tests/filesys/base/syn-remove.errors > tests/filesys/base/syn-remove.output
+perl -I../.. ../../tests/filesys/base/syn-remove.ck tests/filesys/base/syn-remove tests/filesys/base/syn-remove.result
+FAIL tests/filesys/base/syn-remove
+Test output failed to match any acceptable form.
+
+Acceptable output:
+  (syn-remove) begin
+  (syn-remove) create "deleteme"
+  (syn-remove) open "deleteme"
+  (syn-remove) remove "deleteme"
+  (syn-remove) write "deleteme"
+  (syn-remove) seek "deleteme" to 0
+  (syn-remove) read "deleteme"
+  (syn-remove) close "deleteme"
+  (syn-remove) end
+Differences in `diff -u' format:
+- (syn-remove) begin
+- (syn-remove) create "deleteme"
+- (syn-remove) open "deleteme"
+- (syn-remove) remove "deleteme"
+- (syn-remove) write "deleteme"
+- (syn-remove) seek "deleteme" to 0
+- (syn-remove) read "deleteme"
+- (syn-remove) close "deleteme"
+- (syn-remove) end
++ initially stack pointer was 0xc0000000
++ 1 num words
++ 0 extra globbed whitespace
++ strings on stack:
++ 0xbffffff5 : syn-remove\0
++ 
++ after alignment stack is at 0xbffffff4
++ *argv contents : 
++ 0xbfffffec : 0xbffffff5
++ 0xbffffff0 : 0xc010808c
++ 
++ argv contents:
++ 0xbfffffe8 : 0xbfffffec
++ 
++ argc contents
++ :0xbfffffe4 : 1
++ 
++ null terminator:
++ 0xbfffffe0 : 0
++ system call no 9!
+
+(Process exit codes are excluded for matching purposes.)
+gcc -m32 -c ../../tests/filesys/base/syn-write.c -o tests/filesys/base/syn-write.o -g -msoft-float -O -fno-stack-protector -nostdinc -I../.. -I../../lib -I../../lib/user -I. -Wall -W -Wstrict-prototypes -Wmissing-prototypes -Wsystem-headers  -MMD -MF tests/filesys/base/syn-write.d
+gcc -m32  -Wl,--build-id=none -nostdlib -static -Wl,-T,../../lib/user/user.lds tests/filesys/base/syn-write.o tests/lib.o tests/filesys/seq-test.o tests/main.o lib/user/entry.o libc.a -o tests/filesys/base/syn-write
+gcc -m32 -c ../../tests/filesys/base/child-syn-wrt.c -o tests/filesys/base/child-syn-wrt.o -g -msoft-float -O -fno-stack-protector -nostdinc -I../.. -I../../lib -I../../lib/user -I. -Wall -W -Wstrict-prototypes -Wmissing-prototypes -Wsystem-headers  -MMD -MF tests/filesys/base/child-syn-wrt.d
+gcc -m32  -Wl,--build-id=none -nostdlib -static -Wl,-T,../../lib/user/user.lds tests/filesys/base/child-syn-wrt.o tests/lib.o tests/filesys/seq-test.o lib/user/entry.o libc.a -o tests/filesys/base/child-syn-wrt
+pintos -v -k -T 60 --bochs  --filesys-size=2 -p tests/filesys/base/syn-write -a syn-write -p tests/filesys/base/child-syn-wrt -a child-syn-wrt -- -q  -f run syn-write < /dev/null 2> tests/filesys/base/syn-write.errors > tests/filesys/base/syn-write.output
+perl -I../.. ../../tests/filesys/base/syn-write.ck tests/filesys/base/syn-write tests/filesys/base/syn-write.result
+FAIL tests/filesys/base/syn-write
+Test output failed to match any acceptable form.
+
+Acceptable output:
+  (syn-write) begin
+  (syn-write) create "stuff"
+  (syn-write) exec child 1 of 10: "child-syn-wrt 0"
+  (syn-write) exec child 2 of 10: "child-syn-wrt 1"
+  (syn-write) exec child 3 of 10: "child-syn-wrt 2"
+  (syn-write) exec child 4 of 10: "child-syn-wrt 3"
+  (syn-write) exec child 5 of 10: "child-syn-wrt 4"
+  (syn-write) exec child 6 of 10: "child-syn-wrt 5"
+  (syn-write) exec child 7 of 10: "child-syn-wrt 6"
+  (syn-write) exec child 8 of 10: "child-syn-wrt 7"
+  (syn-write) exec child 9 of 10: "child-syn-wrt 8"
+  (syn-write) exec child 10 of 10: "child-syn-wrt 9"
+  (syn-write) wait for child 1 of 10 returned 0 (expected 0)
+  (syn-write) wait for child 2 of 10 returned 1 (expected 1)
+  (syn-write) wait for child 3 of 10 returned 2 (expected 2)
+  (syn-write) wait for child 4 of 10 returned 3 (expected 3)
+  (syn-write) wait for child 5 of 10 returned 4 (expected 4)
+  (syn-write) wait for child 6 of 10 returned 5 (expected 5)
+  (syn-write) wait for child 7 of 10 returned 6 (expected 6)
+  (syn-write) wait for child 8 of 10 returned 7 (expected 7)
+  (syn-write) wait for child 9 of 10 returned 8 (expected 8)
+  (syn-write) wait for child 10 of 10 returned 9 (expected 9)
+  (syn-write) open "stuff"
+  (syn-write) read "stuff"
+  (syn-write) end
+Differences in `diff -u' format:
+- (syn-write) begin
+- (syn-write) create "stuff"
+- (syn-write) exec child 1 of 10: "child-syn-wrt 0"
+- (syn-write) exec child 2 of 10: "child-syn-wrt 1"
+- (syn-write) exec child 3 of 10: "child-syn-wrt 2"
+- (syn-write) exec child 4 of 10: "child-syn-wrt 3"
+- (syn-write) exec child 5 of 10: "child-syn-wrt 4"
+- (syn-write) exec child 6 of 10: "child-syn-wrt 5"
+- (syn-write) exec child 7 of 10: "child-syn-wrt 6"
+- (syn-write) exec child 8 of 10: "child-syn-wrt 7"
+- (syn-write) exec child 9 of 10: "child-syn-wrt 8"
+- (syn-write) exec child 10 of 10: "child-syn-wrt 9"
+- (syn-write) wait for child 1 of 10 returned 0 (expected 0)
+- (syn-write) wait for child 2 of 10 returned 1 (expected 1)
+- (syn-write) wait for child 3 of 10 returned 2 (expected 2)
+- (syn-write) wait for child 4 of 10 returned 3 (expected 3)
+- (syn-write) wait for child 5 of 10 returned 4 (expected 4)
+- (syn-write) wait for child 6 of 10 returned 5 (expected 5)
+- (syn-write) wait for child 7 of 10 returned 6 (expected 6)
+- (syn-write) wait for child 8 of 10 returned 7 (expected 7)
+- (syn-write) wait for child 9 of 10 returned 8 (expected 8)
+- (syn-write) wait for child 10 of 10 returned 9 (expected 9)
+- (syn-write) open "stuff"
+- (syn-write) read "stuff"
+- (syn-write) end
++ initially stack pointer was 0xc0000000
++ 1 num words
++ 0 extra globbed whitespace
++ strings on stack:
++ 0xbffffff6 : syn-write\0
++ 
++ after alignment stack is at 0xbffffff4
++ *argv contents : 
++ 0xbfffffec : 0xbffffff6
++ 0xbffffff0 : 0xc010808c
++ 
++ argv contents:
++ 0xbfffffe8 : 0xbfffffec
++ 
++ argc contents
++ :0xbfffffe4 : 1
++ 
++ null terminator:
++ 0xbfffffe0 : 0
++ system call no 9!
+
+(Process exit codes are excluded for matching purposes.)
+FAIL tests/userprog/args-none
+FAIL tests/userprog/args-single
+FAIL tests/userprog/args-multiple
+FAIL tests/userprog/args-many
+FAIL tests/userprog/args-dbl-space
+FAIL tests/userprog/sc-bad-sp
+FAIL tests/userprog/sc-bad-arg
+FAIL tests/userprog/sc-boundary
+FAIL tests/userprog/sc-boundary-2
+FAIL tests/userprog/halt
+FAIL tests/userprog/exit
+FAIL tests/userprog/create-normal
+FAIL tests/userprog/create-empty
+FAIL tests/userprog/create-null
+FAIL tests/userprog/create-bad-ptr
+FAIL tests/userprog/create-long
+FAIL tests/userprog/create-exists
+FAIL tests/userprog/create-bound
+FAIL tests/userprog/open-normal
+FAIL tests/userprog/open-missing
+FAIL tests/userprog/open-boundary
+FAIL tests/userprog/open-empty
+FAIL tests/userprog/open-null
+FAIL tests/userprog/open-bad-ptr
+FAIL tests/userprog/open-twice
+FAIL tests/userprog/close-normal
+FAIL tests/userprog/close-twice
+FAIL tests/userprog/close-stdin
+FAIL tests/userprog/close-stdout
+FAIL tests/userprog/close-bad-fd
+FAIL tests/userprog/read-normal
+FAIL tests/userprog/read-bad-ptr
+FAIL tests/userprog/read-boundary
+FAIL tests/userprog/read-zero
+FAIL tests/userprog/read-stdout
+FAIL tests/userprog/read-bad-fd
+FAIL tests/userprog/write-normal
+FAIL tests/userprog/write-bad-ptr
+FAIL tests/userprog/write-boundary
+FAIL tests/userprog/write-zero
+FAIL tests/userprog/write-stdin
+FAIL tests/userprog/write-bad-fd
+FAIL tests/userprog/exec-once
+FAIL tests/userprog/exec-arg
+FAIL tests/userprog/exec-multiple
+FAIL tests/userprog/exec-missing
+FAIL tests/userprog/exec-bad-ptr
+FAIL tests/userprog/wait-simple
+FAIL tests/userprog/wait-twice
+FAIL tests/userprog/wait-killed
+FAIL tests/userprog/wait-bad-pid
+FAIL tests/userprog/multi-recurse
+FAIL tests/userprog/multi-child-fd
+FAIL tests/userprog/rox-simple
+FAIL tests/userprog/rox-child
+FAIL tests/userprog/rox-multichild
+FAIL tests/userprog/bad-read
+FAIL tests/userprog/bad-write
+FAIL tests/userprog/bad-read2
+FAIL tests/userprog/bad-write2
+FAIL tests/userprog/bad-jump
+FAIL tests/userprog/bad-jump2
+FAIL tests/userprog/multi-join
+FAIL tests/userprog/multi-joinall
+FAIL tests/userprog/multi-exit
+FAIL tests/userprog/multi-exit-m
+FAIL tests/userprog/multi-pid
+FAIL tests/userprog/multi-tid
+FAIL tests/userprog/multi-crit
+FAIL tests/userprog/no-vm/multi-oom
+FAIL tests/filesys/base/lg-create
+FAIL tests/filesys/base/lg-full
+FAIL tests/filesys/base/lg-random
+FAIL tests/filesys/base/lg-seq-block
+FAIL tests/filesys/base/lg-seq-random
+FAIL tests/filesys/base/sm-create
+FAIL tests/filesys/base/sm-full
+FAIL tests/filesys/base/sm-random
+FAIL tests/filesys/base/sm-seq-block
+FAIL tests/filesys/base/sm-seq-random
+FAIL tests/filesys/base/syn-read
+FAIL tests/filesys/base/syn-remove
+FAIL tests/filesys/base/syn-write
+83 of 83 tests failed.
+../../tests/Make.tests:26: recipe for target 'check' failed
+make[1]: Leaving directory '/home/carmina/pintos/src/userprog/build'
+../Makefile.kernel:10: recipe for target 'check' failed

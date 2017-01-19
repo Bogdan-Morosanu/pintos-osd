@@ -6,6 +6,7 @@
  */
 
 #include <stdlib.h>
+#include <stdint.h>
 
 #include "common-vm.h"
 
@@ -13,7 +14,7 @@
 #include "threads/pte.h"
 
 void
-pte_forall(void *pd , void (*foo)(uint32_t * pte))
+pte_forall(uint32_t *pd , void (*foo)(uint32_t * pte))
 {
     if (NULL == pd) {
         printf("[WARNING] calling pte_forall on null pde!\n");
