@@ -12,6 +12,7 @@
 #include "vm/common-supp-pd.h"
 #include "userprog/pagedir.h"
 #include "threads/synch.h"
+#include "vm/carmina-swap.h"
 
 
 void user_page_list_alloc(void)
@@ -29,7 +30,7 @@ void user_page_list_free(void)
  * Used for evicting a page
  * Delegates to corresponding eviction methods MAYBE?
  */
-void evict_page (struct thread *t, void * addr )
+void evict_page (void * addr )
 {
 
 
@@ -68,10 +69,10 @@ void handle_swap_evict(struct thread *t,void *vaddr)
 
 	//set present false, swapped out true and prepare spte
 
-	uint32_t *pte = lookup_page (t->pd, vaddr, false);
+	uint32_t *pte = lookup_page (t->pagedir, vaddr, false);
 	pte_set_swapped(pte);
 	sup_page_dir_set(t, vaddr, segment_idx);
-	pagedir_clear_page(t->pd,vaddr);
+	pagedir_clear_page(t->pagedir,vaddr);
 
 }
 
@@ -93,9 +94,9 @@ struct user_page_handle *find_evict_victim(void)
 			e = list_next (e))
 	{
 		struct user_page_handle *u = list_entry (e, struct user_page_handle, elem);
-		if (pagedir_is_dirty(u->th, u->vaddr))
+		if (pagedir_is_dirty(u->th->pagedir, u->vaddr))
 		{
-			if (pagedir_is_accessed(u->th, u->vaddr))
+			if (pagedir_is_accessed(u->th->pagedir, u->vaddr))
 			{
 				value = 3;
 			}
@@ -106,7 +107,7 @@ struct user_page_handle *find_evict_victim(void)
 		}
 		else
 		{
-			if (pagedir_is_accessed(u->th, u->vaddr))
+			if (pagedir_is_accessed(u->th->pagedir, u->vaddr))
 			{
 				value = 2;
 			}
