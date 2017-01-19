@@ -4,6 +4,7 @@
 #include <debug.h>
 #include <list.h>
 #include <stdint.h>
+#include "threads/synch.h"
 
 /* States in a thread's life cycle. */
 enum thread_status
@@ -119,6 +120,12 @@ struct thread
     /* Owned by moro-syscalls-process.c
      *  NULL for kernel threads */
     struct proc_desc *pd;	
+
+
+    /* Owned by common-sup-pd.c */
+    uint32_t *sup_pagedir;
+    struct lock pd_lock;
+
   };
 
 /* If false (default), use round-robin scheduler.
