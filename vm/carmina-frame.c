@@ -7,14 +7,18 @@
 
 #include "carmina-frame.h"
 #include <stdio.h>
-#include "threads/synch.h"
-#include "lib/kernel/list.h"
-#include "vm/common-supp-pd.h"
-#include "userprog/pagedir.h"
-#include "threads/synch.h"
-#include "vm/carmina-swap.h"
 
-#include "common-vm.h"
+#include "lib/kernel/list.h"
+
+#include "userprog/pagedir.h"
+
+#include "threads/synch.h"
+#include "threads/palloc.h"
+
+#include "vm/common-supp-pd.h"
+#include "vm/carmina-swap.h"
+#include "vm/common-vm.h"
+
 
 void user_page_list_alloc(void)
 {
