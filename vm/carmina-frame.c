@@ -21,6 +21,8 @@
 
 #include "vm/common-vm.h"
 
+#include "threads/init.h"
+
 void user_page_list_alloc(void)
 {
 	list_init(&user_page_list);
@@ -105,9 +107,10 @@ struct user_page_handle *find_evict_victim(void)
 			e = list_next (e))
 	{
 		struct user_page_handle *u = list_entry (e, struct user_page_handle, elem);
-		if (pagedir_is_dirty(u->th->pagedir, u->vaddr))
+		if (pagedir_is_dirty(u->th->pagedir, u->vaddr) || pagedir_is_dirty(init_page_dir,pagedir_get_page(u->th->pagedir,u->vaddr) ))
 		{
-			if (pagedir_is_accessed(u->th->pagedir, u->vaddr))
+			if (pagedir_is_accessed(u->th->pagedir, u->vaddr)
+					|| pagedir_is_accessed(init_page_dir,pagedir_get_page(u->th->pagedir,u->vaddr)))
 			{
 				value = 3;
 			}
@@ -118,7 +121,8 @@ struct user_page_handle *find_evict_victim(void)
 		}
 		else
 		{
-			if (pagedir_is_accessed(u->th->pagedir, u->vaddr))
+			if (pagedir_is_accessed(u->th->pagedir, u->vaddr)
+					|| pagedir_is_accessed(init_page_dir,pagedir_get_page(u->th->pagedir,u->vaddr)))
 			{
 				value = 2;
 			}

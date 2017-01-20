@@ -14,6 +14,8 @@
 #include "threads/moro-threads.h"
 #include "threads/carmina-priolist.h"
 #include "threads/moro-donation.h"
+#include "vm/carmina-frame.h"
+#include "threads/init.h"
 
 #ifdef USERPROG
 #include "userprog/process.h"
@@ -115,8 +117,8 @@ void thread_start(void) {
 	/* Wait for the idle thread to initialize idle_thread. */
 	sema_down(&idle_started);
 
-    /* Setup a threads structure for the sleep waker thread */
-    thread_create("waker thread", PRI_DEFAULT, thread_wake, NULL);
+	/* Setup a threads structure for the sleep waker thread */
+	thread_create("waker thread", PRI_DEFAULT, thread_wake, NULL);
 }
 
 /* Called by the timer interrupt handler at each timer tick.
@@ -129,7 +131,7 @@ void thread_tick(void) {
 		idle_ticks++;
 #ifdef USERPROG
 	else if (t->pagedir != NULL)
-	user_ticks++;
+		user_ticks++;
 #endif
 	else
 		kernel_ticks++;
@@ -147,14 +149,14 @@ void thread_print_stats(void) {
 
 /* Function used as the basis for a kernel thread. */
 static void user_thread(thread_func *function, void *aux) {
-    ASSERT(function != NULL);
+	ASSERT(function != NULL);
 
-    intr_enable(); /* The scheduler runs with interrupts off. */
+	intr_enable(); /* The scheduler runs with interrupts off. */
 
-    // user threads start in start_process but return from user main
-    // this means we need to the return value from main.
+	// user threads start in start_process but return from user main
+	// this means we need to the return value from main.
 
-    function(aux); /* user threads are wrapped in _start, which never returns */
+	function(aux); /* user threads are wrapped in _start, which never returns */
 }
 
 /* Creates a new kernel thread named NAME with the given initial
@@ -174,7 +176,7 @@ static void user_thread(thread_func *function, void *aux) {
  Priority scheduling is the goal of Problem 1-3. */
 tid_t
 thread_create(const char *name, int priority, thread_func *function,
-              void *aux)
+		void *aux)
 {
 	struct thread *t;
 	struct kernel_thread_frame *kf;
@@ -343,11 +345,11 @@ void thread_foreach(thread_action_func *func, void *aux) {
 /* Sets the current thread's priority to NEW_PRIORITY. */
 void thread_set_priority(int new_priority) {
 
-    struct thread *t = thread_current();
-    int old_priority = t->priority;
+	struct thread *t = thread_current();
+	int old_priority = t->priority;
 
-    t->original_prio = new_priority;
-    prio_update(t);
+	t->original_prio = new_priority;
+	prio_update(t);
 
 	if (new_priority < old_priority)
 		thread_yield();
@@ -380,7 +382,7 @@ int thread_get_recent_cpu(void) {
 	/* Not yet implemented. */
 	return 0;
 }
-
+
 /* Idle thread.  Executes when no other thread is ready to run.
 
  The idle thread is initially put on the ready list by
@@ -397,27 +399,49 @@ static void idle(void *idle_started_ UNUSED) {
 
 	for (;;) {
 
-	    // cleanup orphan processes
-	    struct list_elem *e;
-	    for (e = list_begin(&GLOBAL_PROCESSES); e != list_end(&GLOBAL_PROCESSES); e = list_next(e)) {
-	        struct proc_desc *pd = list_entry(e, struct proc_desc, elem);
+		// cleanup orphan processes
+		struct list_elem *e;
+		for (e = list_begin(&GLOBAL_PROCESSES); e != list_end(&GLOBAL_PROCESSES); e = list_next(e)) {
+			struct proc_desc *pd = list_entry(e, struct proc_desc, elem);
 
-	        bool success = lock_try_acquire(&pd->wait_bcast_lock);
-	        if (success) {
-	            if (pd->state == PROCESS_ZOMBIE) {
-	                // cleanup
-                    lock_release(&pd->wait_bcast_lock); // for consistency's sake
-	                list_remove(e);
-	                free_proc_desc(pd);
-	                break;
-	                // list_remove invalidates our iterators, so we break and
-	                // cleanup next zombie process on next iteration.
+			bool success = lock_try_acquire(&pd->wait_bcast_lock);
+			if (success) {
+				if (pd->state == PROCESS_ZOMBIE) {
+					// cleanup
+					lock_release(&pd->wait_bcast_lock); // for consistency's sake
+					list_remove(e);
+					free_proc_desc(pd);
+					break;
+					// list_remove invalidates our iterators, so we break and
+					// cleanup next zombie process on next iteration.
 
-	            } else {
-	                lock_release(&pd->wait_bcast_lock);
-	            }
-	        }
-	    }
+				} else {
+					lock_release(&pd->wait_bcast_lock);
+				}
+			}
+		}
+
+
+		/**
+		 * Added by Carmina
+		 * Clean the accessed and dirty bits for user processes
+		 */
+		if (idle_ticks == 20)
+		{
+			struct list_elem *e;
+			lock_acquire(&user_page_list_lock);
+			for (e = list_begin (&user_page_list); e != list_end (&user_page_list);
+					e = list_next (e))
+			{
+				struct user_page_handle *u = list_entry (e, struct user_page_handle, elem);
+				pagedir_set_accessed(u->th->pagedir,u->vaddr,false);
+				pagedir_set_accessed(init_page_dir, pagedir_get_page(u->th->pagedir,u->vaddr),false);
+				pagedir_set_dirty(u->th->pagedir,u->vaddr,false);
+				pagedir_set_dirty(init_page_dir, pagedir_get_page(u->th->pagedir,u->vaddr),false);
+			}
+			lock_release(&user_page_list_lock);
+		}
+
 
 		/* Let someone else run. */
 		intr_disable();
@@ -449,7 +473,7 @@ static void kernel_thread(thread_func *function, void *aux) {
 }
 
 
-
+
 /* Returns the running thread. */
 struct thread *
 running_thread(void) {
@@ -483,10 +507,10 @@ static void init_thread(struct thread *t, const char *name, int priority) {
 	t->magic = THREAD_MAGIC;
 
 	t->original_prio = t->priority;
-    list_init(&t->prio_history);
-    t->wait_on = NULL;
+	list_init(&t->prio_history);
+	t->wait_on = NULL;
 
-    // TODO init thread
+	// TODO init thread
 
 	list_push_back(&all_list, &t->allelem);
 }
@@ -592,7 +616,7 @@ static tid_t allocate_tid(void) {
 
 	return tid;
 }
-
+
 /* Offset of `stack' member within `struct thread'.
  Used by switch.S, which can't figure it out on its own. */
 uint32_t thread_stack_ofs = offsetof(struct thread, stack);
