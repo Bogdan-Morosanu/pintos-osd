@@ -171,10 +171,16 @@ close (int fd)
   syscall1 (SYS_CLOSE, fd);
 }
 
+struct mmap_args {
+	int fd;
+	char *addr;
+};
+
 mapid_t
 mmap (int fd, void *addr)
 {
-  return syscall2 (SYS_MMAP, fd, addr);
+  struct mmap_args m= {fd, addr};
+  return syscall1 (SYS_MMAP, &m);
 }
 
 void

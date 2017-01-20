@@ -139,6 +139,12 @@ syscall_handler (struct intr_frame *f)
       f->eax = handle_filesize(fd);
   }
   break;
+
+  case SYS_MMAP:
+	  //f->eax =
+	  break;
+  case SYS_MUNMAP:
+	  break;
   default:
     { // invalid syscall number
       process_exit(EXIT_FAILURE);
