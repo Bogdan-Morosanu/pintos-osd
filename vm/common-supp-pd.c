@@ -27,7 +27,7 @@ uint32_t *sup_page_dir_alloc()
 /// global user_page_list and frees memory .
 void sup_page_dir_free(uint32_t * sup_pd)
 {
-    // TODO carmina : free pages in user page list
+    user_page_list_free();
     pagedir_destroy(sup_pd);
 }
 

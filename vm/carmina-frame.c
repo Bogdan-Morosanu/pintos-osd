@@ -26,6 +26,17 @@ void user_page_list_alloc(void)
 
 void user_page_list_free(void)
 {
+	struct list_elem *e;
+	lock_acquire(&user_page_list_lock);
+	for (e = list_begin (&user_page_list); e != list_end (&user_page_list);
+			e = list_next (e))
+	{
+		struct user_page_handle *u = list_entry (e, struct user_page_handle, elem);
+		if (thread_current() == u->th){
+			palloc_free_page(pagedir_get_page(thread_current()->pagedir,u->vaddr));
+		}
+	}
+	lock_release(&user_page_list_lock);
 
 }
 
@@ -53,7 +64,7 @@ void load_page(struct thread *t,void *addr)
 void handle_swap_load(struct thread *t ,void *vaddr)
 {
 	if (thread_current() != t->vm_thread_lock.holder) {
-	    lock_acquire(&t->vm_thread_lock);
+		lock_acquire(&t->vm_thread_lock);
 	}
 
 	int segment_idx = sup_page_dir_get(t, vaddr); //segment where the page is stored
@@ -76,7 +87,7 @@ void handle_swap_evict(struct thread *t, void *vaddr)
 	int segment_idx;
 
 	if (thread_current() != t->vm_thread_lock.holder) {
-	    lock_acquire(&t->vm_thread_lock);
+		lock_acquire(&t->vm_thread_lock);
 	}
 
 	lock_acquire(&swap_lock);
