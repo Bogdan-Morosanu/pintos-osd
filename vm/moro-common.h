@@ -15,8 +15,11 @@
 
 #include "lib/kernel/list.h"
 
-
 struct file;
+
+bool
+actually_load_segment (struct file *file, off_t ofs, uint8_t *upage,
+                       uint32_t read_bytes, uint32_t zero_bytes, bool writable);
 
 // source of the paged file handle
 enum paged_file_type { PAGED_ELF, PAGED_MMAP };

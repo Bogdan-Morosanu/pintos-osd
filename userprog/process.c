@@ -25,6 +25,8 @@
 #include "userprog/moro-syscalls-process.h"
 #include "userprog/commons-process.h"
 
+#include "vm/common-supp-pd.h"
+
 static thread_func start_process NO_RETURN;
 static bool load (const char *cmdline, void (**eip) (void), void **esp);
 
@@ -117,7 +119,7 @@ start_process (void *vptr_pd)
     struct proc_desc *pd = (struct proc_desc *)vptr_pd;
 
     struct thread *cnt_thread = thread_current();
-    cnt_thread->pd = pd;
+    cnt_thread->pd = pd; //<< process descriptor
     pd->proc_id = cnt_thread->tid;
 
     // get name of executable
@@ -387,6 +389,7 @@ load (const char *file_name, void (**eip) (void), void **esp)
 
     /* Allocate and activate page directory. */
     t->pagedir = pagedir_create ();
+    t->sup_pagedir = sup_page_dir_alloc();
     if (t->pagedir == NULL)
         goto done;
     process_activate ();

@@ -8,7 +8,9 @@
 #include "common-supp-pd.h"
 
 #include "userprog/pagedir.h"
+
 #include "threads/vaddr.h"
+#include "threads/palloc.h"
 
 #include "lib/debug.h"
 
@@ -16,9 +18,8 @@
 /// pages.
 uint32_t *sup_page_dir_alloc()
 {
-    uint32_t *p = palloc_get_page(0);
+    uint32_t *p = palloc_get_page(PAL_ZERO);
     ASSERT(p);
-    memset (p, 0, PGSIZE);
 
     return p;
 }
