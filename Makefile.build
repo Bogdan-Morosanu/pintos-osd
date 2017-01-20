@@ -80,6 +80,7 @@ vm_SRC += vm/carmina-swap.c
 vm_SRC += vm/common-supp-pd.c
 vm_SRC += vm/moro-lazy-loaded.c
 vm_SRC += vm/moro-mmap.c
+vm_SRC += vm/moro-common.c
 
 # Filesystem code.
 filesys_SRC  = filesys/filesys.c	# Filesystem core.
