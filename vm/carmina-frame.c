@@ -42,7 +42,6 @@ void user_page_list_free(void)
 		}
 	}
 	lock_release(&user_page_list_lock);
-
 }
 
 
@@ -56,6 +55,12 @@ void handle_swap_load(struct thread *t ,void *vaddr)
 
 	void *kpage = palloc_get_page(PAL_ZERO);
 	pagedir_set_page(t->pagedir,  vaddr, kpage, true);
+
+	struct user_page_handle *u;
+	u = malloc(sizeof(struct user_page_handle));
+	u->th = t;
+	u->vaddr = vaddr;
+	list_push_back(&user_page_list, &u->elem);
 
 	lock_acquire(&swap_lock);
 	swap_in(segment_idx, vaddr);
