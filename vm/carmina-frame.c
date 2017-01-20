@@ -43,26 +43,6 @@ void user_page_list_free(void)
 
 }
 
-/**
- * Used for evicting a page
- * Delegates to corresponding eviction methods MAYBE?
- */
-void evict_page (struct thread *t,void * addr )
-{
-
-
-
-}
-
-/**
- * Used for loading a page if it has been swapped out
- * or it must be read from a file
- * ADDR represents the virtual address in user space
- */
-void load_page(struct thread *t,void *addr)
-{
-
-}
 
 void handle_swap_load(struct thread *t ,void *vaddr)
 {
