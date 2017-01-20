@@ -28,7 +28,7 @@ void handle_mmap_evict(uint32_t * pte , uint32_t * sup_pte);
 /// writes contents back to HDD ( if applicable )
 /// and frees allocated memory .
 /// called in process exit for all files still in mmaped_files
-void cleanup_mmap(struct paged_mmap_handle * mfh);
+void cleanup_mmap(struct paged_file_handle * mfh);
 
 
 #endif /* SRC_VM_MORO_MMAP_H_ */

@@ -26,7 +26,7 @@ handle_mmap_evict(uint32_t * pte , uint32_t * sup_pte)
 }
 
 void
-cleanup_mmap(struct paged_mmap_handle * mfh)
+cleanup_mmap(struct paged_file_handle * mfh)
 {
 
 }
