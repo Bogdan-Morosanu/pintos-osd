@@ -79,6 +79,7 @@ syscall_handler (struct intr_frame *f)
 
   case SYS_WRITE:
     {
+      printf("sys write called!\n");
       struct write_args *w = ((int*)f->esp)[1];
       int result= handle_write(w->fd, w->buffer, w->size);
       f->eax=result;

@@ -53,13 +53,16 @@ actually_load_segment (struct file *file, off_t ofs, uint8_t *upage,
 
         /* Get a page of memory. */
         uint8_t *kpage = palloc_get_page (PAL_USER);
-        if (kpage == NULL)
+        if (kpage == NULL) {
+            printf("allocation failed");
             return false;
+        }
 
         /* Load this page. */
         if (file_read (file, kpage, page_read_bytes) != (int) page_read_bytes)
         {
             palloc_free_page (kpage);
+            printf("read failed\n");
             return false;
         }
         memset (kpage + page_read_bytes, 0, page_zero_bytes);
@@ -67,15 +70,21 @@ actually_load_segment (struct file *file, off_t ofs, uint8_t *upage,
         /* Add the page to the process's address space. */
         if (!install_page (upage, kpage, writable))
         {
+            printf("install page failed\n");
             palloc_free_page (kpage);
             return false;
         }
 
+
+        printf("page should be installed...\n");
         struct user_page_handle *u;
         u = malloc(sizeof(struct user_page_handle));
         u->th = thread_current();
         u->vaddr = upage;
+
+        lock_acqure(&user_page_list_lock);
         list_push_back(&user_page_list, &u->elem);
+        lock_release(&user_page_list_lock);
 
         /* Advance. */
         read_bytes -= page_read_bytes;
@@ -119,6 +128,7 @@ bool setup_lazy_load (struct file *file, off_t ofs, uint8_t *upage,
     *pte &= ~PTE_P;
     *pte |= PAGE_LAZY_LOADED;
     *pte |= PTE_U;
+    *pte |= PTE_W;
     invalidate_pagedir (t->pagedir);
 
     printf("marked!\n");

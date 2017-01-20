@@ -165,12 +165,10 @@ page_fault (struct intr_frame *f)
   if (pte && IS_NOT_HOPELESS(*pte)) {
       printf("[page_fault] decided page is not hopeless!\n");
       load_page(fault_addr);
-      printf("trying to read through that");
-
-      uint32_t *u =
-      printf("read int %d through that");
-
       return;
+
+  } else {
+      printf("pte %p is hopeless\n", *pte);
   }
 
 

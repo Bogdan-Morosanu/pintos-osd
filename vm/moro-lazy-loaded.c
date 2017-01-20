@@ -41,10 +41,6 @@ handle_lazy_load(struct thread *t, void *v_addr)
                           pfh->read_bytes, pfh->zero_bytes,
                           pfh->writable);
 
-    uint32_t *pte = lookup_page(t->pagedir, v_addr, false);
-    printf("pte : %p\n", pte);
-    *pte = *pte | PTE_U | PTE_P | PTE_W; //pte_create_user(v_addr, false); // not readable for lazy loaded pages
-
     printf("load returned!!\n");
 }
 

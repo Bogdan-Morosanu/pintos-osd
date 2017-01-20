@@ -112,6 +112,7 @@ pagedir_set_page (uint32_t *pd, void *upage, void *kpage, bool writable)
   if (pte != NULL) 
     {
       ASSERT ((*pte & PTE_P) == 0);
+      printf("creating pte mapping...\n");
       *pte = pte_create_user (kpage, writable);
       return true;
     }
