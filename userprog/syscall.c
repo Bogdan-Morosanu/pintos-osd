@@ -35,6 +35,10 @@ struct seek_args {
     int fd;
 };
 
+struct mmap_args {
+    int fd;
+    void *addr;
+};
 
 struct create_args {
     unsigned initial_size;
@@ -141,10 +145,41 @@ syscall_handler (struct intr_frame *f)
   break;
 
   case SYS_MMAP:
-	  //f->eax =
-	  break;
+  {
+      struct mmap_args *args = *(struct mmap_args**)((char *)f->esp + sizeof(int));
+
+      sema_down(&fs_sema);
+
+      struct user_file *uf = NULL;
+      struct list_elem e;
+      struct list *opened_files = &thread_current()->pd->opened_files;
+      for (e = list_begin(opened_files); e != list_end(opened_files); e = list_next(e)) {
+
+          struct user_file *cnt_uf = list_entry(e, struct user_file, elem);
+          if (cnt_uf->fd == args->fd) {
+              uf = cnt_uf;
+              break;
+          }
+      }
+
+      if (NULL == uf) {
+          f->eax = -1;
+
+      } else {
+          f->eax = (uint32_t) uf->f;
+          setup_mmap(uf->f, args->addr);
+      }
+
+      sema_up(&fs_sema);
+  }
+  break;
+
   case SYS_MUNMAP:
-	  break;
+  {
+
+  }
+  break;
+
   default:
     { // invalid syscall number
       process_exit(EXIT_FAILURE);

@@ -23,18 +23,20 @@
 
 #include "common-vm.h"
 #include "common-supp-pd.h"
+#include "filesys/filesys.h"
 
 void free (void *);
 
 void
 handle_lazy_load(struct thread *t, void *v_addr)
 {
+    sema_down(&fs_sema);
     if (thread_current() != t->vm_thread_lock.holder) {
         lock_acquire(&t->vm_thread_lock);
     }
 
     struct paged_file_handle *pfh =
-            *(struct paged_file_handle **)sup_page_dir_get(t->sup_pagedir, v_addr);
+            *(struct paged_file_handle **)sup_page_dir_get(t, v_addr);
 
 
     actually_load_segment(pfh->f, pfh->ofs, pfh->upage,
@@ -42,7 +44,7 @@ handle_lazy_load(struct thread *t, void *v_addr)
                           pfh->writable);
 
     lock_release(&t->vm_thread_lock);
-
+    sema_up(&fs_sema);
 }
 
 void
@@ -62,9 +64,31 @@ handle_lazy_load_evict(struct thread *t, void *v_addr)
 }
 
 void
-cleanup_lazy_load(struct paged_file_handle * pfh)
+cleanup_lazy_load(struct thread *t)
 {
-    free (pfh);
+    lock_acquire(&t->vm_thread_lock);
+
+    struct list_elem e;
+    struct list *pfs = &t->pd->paged_file_segments;
+    int removed = 0;
+    for (e = list_begin(pfs); e != list_end(pfs); e = (removed) ? e : list_next(e)) {
+
+        struct paged_file_handle pfh = list_entry(e, struct paged_file_handle, elem);
+
+        if (PAGED_ELF == pfh->type) {
+            removed = 1;
+
+            struct list_elem *e_nxt = list_next(e);
+            list_remove(e);
+            e = e_nxt;
+
+            free (pfh);
+        } else {
+            removed = 0;
+        }
+    }
+
+    lock_release(&t->vm_thread_lock);
 }
 
 
