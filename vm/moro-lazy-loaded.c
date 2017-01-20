@@ -115,7 +115,7 @@ handle_lazy_load_evict(struct thread *t, void *v_addr)
     uint32_t *pte = lookup_page(t->pagedir, v_addr, false);
     ASSERT (pte);
     palloc_free_page(v_addr);
-    *pte = *pte && !PTE_P;
+    *pte = *pte && ~PTE_P;
 
     lock_release(&t->vm_thread_lock);
 
