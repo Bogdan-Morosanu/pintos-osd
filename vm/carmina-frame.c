@@ -14,11 +14,12 @@
 
 #include "threads/synch.h"
 #include "threads/palloc.h"
+#include "threads/thread.h"
 
 #include "vm/common-supp-pd.h"
 #include "vm/carmina-swap.h"
-#include "vm/common-vm.h"
 
+#include "vm/common-vm.h"
 
 void user_page_list_alloc(void)
 {
@@ -35,7 +36,7 @@ void user_page_list_free(void)
  * Used for evicting a page
  * Delegates to corresponding eviction methods MAYBE?
  */
-void evict_page (void * addr )
+void evict_page (struct thread *t,void * addr )
 {
 
 
@@ -47,7 +48,7 @@ void evict_page (void * addr )
  * or it must be read from a file
  * ADDR represents the virtual address in user space
  */
-void load_page(void *addr)
+void load_page(struct thread *t,void *addr)
 {
 
 }

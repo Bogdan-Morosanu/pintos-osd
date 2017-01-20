@@ -10,6 +10,8 @@
 #include "threads/loader.h"
 #include "threads/synch.h"
 #include "threads/vaddr.h"
+#include "vm/carmina-frame.h"
+#include "threads/thread.h"
 
 /* Page allocator.  Hands out memory in page-size (or
    page-multiple) chunks.  See malloc.h for an allocator that
@@ -83,8 +85,21 @@ palloc_get_multiple (enum palloc_flags flags, size_t page_cnt)
 
   if (page_idx != BITMAP_ERROR)
     pages = pool->base + PGSIZE * page_idx;
-  else
-    pages = NULL;
+  else{
+    if (page_cnt == 1){
+    	struct thread *t= thread_current();
+    	struct user_page_handle *u = find_evict_victim();
+    	if (thread_current() != t->vm_thread_lock.holder) {
+    		    lock_acquire(&t->vm_thread_lock);
+    		}
+    	pages = pagedir_get_page(u->th->pagedir, u->vaddr);
+    	lock_release(&t->vm_thread_lock);
+    }
+    else
+    {
+    	pages = NULL;
+    }
+  }
 
   if (pages != NULL) 
     {

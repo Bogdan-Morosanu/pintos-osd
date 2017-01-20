@@ -22,8 +22,8 @@ struct user_page_handle {
 struct list user_page_list;
 struct lock user_page_list_lock;
 
-void evict_page ( void * addr );
-void load_page ( void * addr );
+void evict_page (struct thread *t, void * addr );
+void load_page (struct thread *t, void * addr );
 
 void user_page_list_alloc(void);
 void user_page_list_free(void);
