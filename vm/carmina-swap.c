@@ -39,7 +39,7 @@ void swap_table_alloc(void)
 	 * It is enough h to keep bitmap for page size chucks, since a whole page is
 	 * swapped out
 	 */
-	swap_table = bitmap_create( swap_number_of_sectors / SWAP_SECTORS_PER_PAGE);
+	swap_table = bitmap_create( swap_number_of_sectors);
 	if(NULL == swap_table)
 	{
 		PANIC("Unable to initialize swap table!");
@@ -69,10 +69,11 @@ void swap_in(size_t bitmap_idx, void *frame_addr)
 	ASSERT(bitmap_test(swap_table, bitmap_idx) == SWAP_USED);
 
 	for(i=0; i < SWAP_SECTORS_PER_PAGE; i++){
-		block_read(swap_block,bitmap_idx+i,frame_addr+BLOCK_SECTOR_SIZE);
+		block_read(swap_block,bitmap_idx+i,frame_addr+BLOCK_SECTOR_SIZE*i);
+		bitmap_set(swap_table,bitmap_idx+i,SWAP_FREE);
 	}
 
-	bitmap_set(swap_table,bitmap_idx,SWAP_FREE);
+
 }
 
 /**
@@ -88,12 +89,12 @@ size_t swap_out(void *frame_addr)
 	ASSERT(NULL != swap_block);
 
 	// find a free index in the swap table
-	free_idx = bitmap_scan_and_flip(swap_table,0,1,SWAP_FREE);
+	free_idx = bitmap_scan_and_flip(swap_table,0,4,SWAP_FREE);
 	ASSERT(free_idx != BITMAP_ERROR);
 
 	// swap out the frame to the swap space
 	for(i=0; i < SWAP_SECTORS_PER_PAGE; i++){
-		block_write(swap_block,free_idx+i,frame_addr+BLOCK_SECTOR_SIZE);
+		block_write(swap_block,free_idx+i,frame_addr+BLOCK_SECTOR_SIZE*i);
 	}
 
 	return free_idx;
