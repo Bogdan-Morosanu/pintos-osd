@@ -78,8 +78,7 @@ actually_load_segment (struct file *file, off_t ofs, uint8_t *upage,
 
 
 
-bool setup_lazy_load (enum paged_file_type type,
-                      struct file *file, off_t ofs, uint8_t *upage,
+bool setup_lazy_load (struct file *file, off_t ofs, uint8_t *upage,
                       uint32_t read_bytes, uint32_t zero_bytes,
                       bool writable)
 {
@@ -90,7 +89,7 @@ bool setup_lazy_load (enum paged_file_type type,
     struct paged_file_handle *pfh = malloc(sizeof *pfh);
     ASSERT(pfh);
 
-    pfh->type = type;
+    pfh->type = PAGED_ELF;
     pfh->f = file;
     pfh->ofs = ofs;
     pfh->upage = upage;
@@ -104,7 +103,7 @@ bool setup_lazy_load (enum paged_file_type type,
 
     // mark page lazy loaded
     uint32_t *pte = lookup_page(t->pagedir, upage);
-    *pte = *pte & PAGE_LAZY_LOADED;
+    *pte = *pte & ~PAGE_LAZY_LOADED;
 
     // populate supplemental page dir
     sup_page_dir_set(upage, pfh);
