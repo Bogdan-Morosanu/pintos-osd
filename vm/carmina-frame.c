@@ -43,26 +43,39 @@ void evict_page (void * addr )
  * or it must be read from a file
  * ADDR represents the virtual address in user space
  */
-void load_page ( void * addr )
+void load_page(void *addr)
 {
 
 }
 
 void handle_swap_load(struct thread *t ,void *vaddr)
 {
-	int segment_idx;
-	segment_idx = sup_page_dir_get(t, vaddr); //segment where the page is stored
+	if (thread_current() != t->vm_thread_lock.holder) {
+	    lock_acquire(&t->vm_thread_lock);
+	}
+
+	int segment_idx = sup_page_dir_get(t, vaddr); //segment where the page is stored
+
+	void *kpage = palloc_get_page(PAL_ZERO);
+	pagedir_set_page(t->pagedir,  vaddr, kpage, true);
+
 	lock_acquire(&swap_lock);
 	swap_in(segment_idx, vaddr);
 	lock_release(&swap_lock);
+
+	lock_acquire(&t->vm_thread_lock);
 }
 
 /**
  * vaddr is the user address of the page
  */
-void handle_swap_evict(struct thread *t,void *vaddr)
+void handle_swap_evict(struct thread *t, void *vaddr)
 {
 	int segment_idx;
+
+	if (thread_current() != t->vm_thread_lock.holder) {
+	    lock_acquire(&t->vm_thread_lock);
+	}
 
 	lock_acquire(&swap_lock);
 	segment_idx = swap_out(vaddr);
@@ -75,6 +88,7 @@ void handle_swap_evict(struct thread *t,void *vaddr)
 	sup_page_dir_set(t, vaddr, segment_idx);
 	pagedir_clear_page(t->pagedir,vaddr);
 
+	lock_release(&t->vm_thread_lock);
 }
 
 /**
