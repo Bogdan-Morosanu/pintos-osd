@@ -71,6 +71,8 @@ void swap_in(size_t bitmap_idx, void *frame_addr)
 	for(i=0; i < SWAP_SECTORS_PER_PAGE; i++){
 		block_read(swap_block,bitmap_idx+i,frame_addr+BLOCK_SECTOR_SIZE);
 	}
+
+	bitmap_set(swap_table,bitmap_idx,SWAP_FREE);
 }
 
 /**
