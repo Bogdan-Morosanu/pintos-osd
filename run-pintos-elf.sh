@@ -9,7 +9,7 @@ fi
 
 # source the pintos paths needed
 . ~/setup-shells/pintos-setup.sh 
-cd userprog
+cd vm
 make
 cd build
-pintos --filesys-size=2 -p "$1/$2" -a "$2.bin" -- -f -q run "$2.bin"
+pintos --filesys-size=2 --swap-size=4 -p "$1/$2" -a "$2.bin" -- -f -q run "$2.bin"

@@ -27,6 +27,7 @@
 
 #include "vm/common-supp-pd.h"
 
+
 static thread_func start_process NO_RETURN;
 static bool load (const char *cmdline, void (**eip) (void), void **esp);
 
@@ -117,6 +118,7 @@ static void
 start_process (void *vptr_pd)
 {
     struct proc_desc *pd = (struct proc_desc *)vptr_pd;
+    printf("starting process %s\n", pd->cmd_line);
 
     struct thread *cnt_thread = thread_current();
     cnt_thread->pd = pd; //<< process descriptor
@@ -390,11 +392,12 @@ load (const char *file_name, void (**eip) (void), void **esp)
     /* Allocate and activate page directory. */
     t->pagedir = pagedir_create ();
     t->sup_pagedir = sup_page_dir_alloc();
-    if (t->pagedir == NULL)
+    if (t->pagedir == NULL || t->sup_pagedir == NULL)
         goto done;
     process_activate ();
 
     /* Open executable file. */
+    sema_down(&fs_sema);
     file = filesys_open (file_name);
     if (file == NULL)
     {

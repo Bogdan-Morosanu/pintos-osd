@@ -35,17 +35,23 @@ void load_page(void *addr)
     uint32_t *pte = lookup_page(t->pagedir, addr, false);
 
     if (IS_LAZY_LOADED(*pte)) {
+        printf("[load] %p decided as lazy-loading\n", addr);
         handle_lazy_load(t, addr);
 
+        printf("[load] page is now in pd!\n");
+
     } else if (IS_SWAPPED(*pte)) {
+        printf("[load] %p decided as swapped\n", addr);
         handle_swap_load(t, addr);
 
     } else if (IS_MMAPPED(*pte)) {
+        printf("[load] %p decided as mmapped\n", addr);
         handle_mmap_load(t, addr);
 
     }
 
     lock_release(&t->vm_thread_lock);
+    printf("[load] released the vm lock\n");
 }
 
 /// evicts page at addr , by dispatching to suitable eviction

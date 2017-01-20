@@ -36,7 +36,6 @@ filesys_init (bool format)
 
   free_map_open ();
 
-
   /**
    * Added by Carmina
    * Give access to fiesys and file

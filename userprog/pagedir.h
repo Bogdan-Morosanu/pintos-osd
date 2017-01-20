@@ -16,5 +16,6 @@ void pagedir_set_accessed (uint32_t *pd, const void *upage, bool accessed);
 void pagedir_activate (uint32_t *pd);
 
 uint32_t *lookup_page (uint32_t *pd, const void *vaddr, bool create);
+void invalidate_pagedir (uint32_t *);
 
 #endif /* userprog/pagedir.h */

@@ -31,10 +31,7 @@ void free (void *);
 void
 handle_lazy_load(struct thread *t, void *v_addr)
 {
-    sema_down(&fs_sema);
-    if (thread_current() != t->vm_thread_lock.holder) {
-        lock_acquire(&t->vm_thread_lock);
-    }
+    ASSERT(thread_current() == t->vm_thread_lock.holder);
 
     struct paged_file_handle *pfh =
             *(struct paged_file_handle **)sup_page_dir_get(t, v_addr);
@@ -44,8 +41,11 @@ handle_lazy_load(struct thread *t, void *v_addr)
                           pfh->read_bytes, pfh->zero_bytes,
                           pfh->writable);
 
-    lock_release(&t->vm_thread_lock);
-    sema_up(&fs_sema);
+    uint32_t *pte = lookup_page(t->pagedir, v_addr, false);
+    printf("pte : %p\n", pte);
+    *pte = *pte | PTE_U | PTE_P | PTE_W; //pte_create_user(v_addr, false); // not readable for lazy loaded pages
+
+    printf("load returned!!\n");
 }
 
 void

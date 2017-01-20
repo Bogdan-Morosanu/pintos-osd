@@ -25,9 +25,13 @@
 
 void user_page_list_alloc(void)
 {
-	list_init(&user_page_list);
-	lock_init(&user_page_list_lock);
+//	list_init(&user_page_list);
+//	lock_init(&user_page_list_lock);
 }
+
+struct list user_page_list = LIST_INITIALIZER(user_page_list);
+struct lock user_page_list_lock = LOCK_INITIALIZER(user_page_list_lock);
+
 
 void user_page_list_free(void)
 {

@@ -7,7 +7,7 @@
 #include "threads/palloc.h"
 
 static uint32_t *active_pd (void);
-static void invalidate_pagedir (uint32_t *);
+void invalidate_pagedir (uint32_t *);
 
 /* Creates a new page directory that has mappings for kernel
    virtual addresses, but none for user virtual addresses.
@@ -66,23 +66,24 @@ lookup_page (uint32_t *pd, const void *vaddr, bool create)
   /* Check for a page table for VADDR.
      If one is missing, create one if requested. */
   pde = pd + pd_no (vaddr);
-  if (*pde == 0) 
-    {
-      if (create)
-        {
+
+  if (*pde == 0) {
+      if (create) {
           pt = palloc_get_page (PAL_ZERO);
-          if (pt == NULL) 
-            return NULL; 
-      
+          if (pt == NULL) {
+              return NULL;
+          }
+
           *pde = pde_create (pt);
-        }
-      else
-        return NULL;
-    }
+
+      } else {
+          return NULL;
+      }
+  }
 
   /* Return the page table entry. */
   pt = pde_get_pt (*pde);
-  return &pt[pt_no (vaddr)];
+      return &pt[pt_no (vaddr)];
 }
 
 /* Adds a mapping in page directory PD from user virtual page
@@ -251,7 +252,7 @@ active_pd (void)
    This function invalidates the TLB if PD is the active page
    directory.  (If PD is not active then its entries are not in
    the TLB, so there is no need to invalidate anything.) */
-static void
+void
 invalidate_pagedir (uint32_t *pd) 
 {
   if (active_pd () == pd) 

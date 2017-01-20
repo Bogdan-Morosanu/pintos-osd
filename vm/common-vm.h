@@ -17,10 +17,12 @@ void pte_forall(uint32_t *pd, int user_only, void (*foo)(uint32_t *));
 #define PAGE_LAZY_LOADED 0x800
 #define PAGE_SWAPPED 0x400
 #define PAGE_MMAPPED 0x200
+#define PAGE_ON_HOLIDAY (PAGE_LAZY_LOADED | PAGE_SWAPPED | PAGE_MMAPPED)
 
 #define IS_LAZY_LOADED(pte) ((pte) & PAGE_LAZY_LOADED )
 #define IS_SWAPPED(pte) ((pte) & PAGE_SWAPPED )
 #define IS_MMAPPED(pte) ((pte) & PAGE_MMAPPED )
+#define IS_NOT_HOPELESS(pte) ((pte) & PAGE_ON_HOLIDAY)
 
 /// sets free flag bits in pte to PAGE_LAZY_LOADED used by pte_forall
 static inline void

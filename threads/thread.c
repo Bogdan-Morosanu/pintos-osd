@@ -14,8 +14,10 @@
 #include "threads/moro-threads.h"
 #include "threads/carmina-priolist.h"
 #include "threads/moro-donation.h"
-#include "vm/carmina-frame.h"
 #include "threads/init.h"
+
+#include "vm/carmina-frame.h"
+#include "vm/common-supp-pd.h"
 
 #ifdef USERPROG
 #include "userprog/process.h"
@@ -510,9 +512,11 @@ static void init_thread(struct thread *t, const char *name, int priority) {
 	list_init(&t->prio_history);
 	t->wait_on = NULL;
 
-	// TODO init thread
+	lock_init(&t->vm_thread_lock);
 
 	list_push_back(&all_list, &t->allelem);
+
+	printf("thread_init exits successfully!\n");
 }
 
 /* Allocates a SIZE-byte frame at the top of thread T's stack and

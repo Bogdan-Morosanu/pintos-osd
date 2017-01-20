@@ -7,6 +7,9 @@
 #include "threads/vaddr.h"
 #include "userprog/process.h"
 
+#include "vm/common-vm.h"
+#include "userprog/pagedir.h"
+
 /* Number of page faults processed. */
 static long long page_fault_cnt;
 
@@ -156,15 +159,20 @@ page_fault (struct intr_frame *f)
      body, and replace it with code that brings in the page to
      which fault_addr refers. */
 
-//  // always fault the user
-//  if (!user) {
-//      if (fault_addr < PHYS_BASE) {
-//          // userland address faulting the kernel, do not panic
-//          f->eip = f->eax; // return to initial address
-//          f->eax = ~0u; // set all bits in eax to mark page fault
-//          return;
-//      }
-//  }
+  struct thread *th_cnt = thread_current();
+
+  uint32_t *pte = lookup_page(th_cnt->pagedir, fault_addr, false);
+  if (pte && IS_NOT_HOPELESS(*pte)) {
+      printf("[page_fault] decided page is not hopeless!\n");
+      load_page(fault_addr);
+      printf("trying to read through that");
+
+      uint32_t *u =
+      printf("read int %d through that");
+
+      return;
+  }
+
 
   printf ("Page fault at %p: %s error %s page in %s context.\n",
                 fault_addr,

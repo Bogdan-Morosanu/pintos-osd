@@ -36,31 +36,22 @@ void sup_page_dir_free(uint32_t * sup_pd)
 void sup_page_dir_set(struct thread *t, void *v_addr, uint32_t val)
 {
     ASSERT(t->pagedir && t->sup_pagedir);
-
-    if (t->vm_thread_lock.holder != thread_current()) {
-        lock_acquire(&t->vm_thread_lock);
-    }
+    ASSERT(t->vm_thread_lock.holder == thread_current());
 
     // 3rd arg == true : map extra tables on set
     uint32_t *pte_addr = lookup_page(t->sup_pagedir, v_addr, true);
     *pte_addr = val;
 
-    lock_release(&t->vm_thread_lock);
 }
 
 uint32_t sup_page_dir_get(struct thread *t, void *v_addr)
 {
     ASSERT(t->pagedir && t->sup_pagedir);
-
-    if (t->vm_thread_lock.holder != thread_current()) {
-            lock_acquire(&t->vm_thread_lock);
-    }
+    ASSERT(t->vm_thread_lock.holder == thread_current());
 
     // 3rd arg == false : do not map extra tables on get
     uint32_t *pte = lookup_page(t->sup_pagedir, v_addr, false);
     ASSERT("called sup_pd_get on unset value!" && pte);
-
-    lock_release(&t->vm_thread_lock);
 
     return *pte;
 }

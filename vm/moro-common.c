@@ -15,6 +15,7 @@
 #include "threads/synch.h"
 #include "threads/vaddr.h"
 #include "threads/palloc.h"
+#include "threads/pte.h"
 
 #include "vm/carmina-frame.h"
 
@@ -69,6 +70,7 @@ actually_load_segment (struct file *file, off_t ofs, uint8_t *upage,
             palloc_free_page (kpage);
             return false;
         }
+
         struct user_page_handle *u;
         u = malloc(sizeof(struct user_page_handle));
         u->th = thread_current();
@@ -89,6 +91,7 @@ bool setup_lazy_load (struct file *file, off_t ofs, uint8_t *upage,
                       uint32_t read_bytes, uint32_t zero_bytes,
                       bool writable)
 {
+    printf("setting up page lazy load for %p\n", upage);
     struct thread *t = thread_current();
     struct proc_desc *proc_d = t->pd;
     ASSERT(proc_d);
@@ -108,16 +111,25 @@ bool setup_lazy_load (struct file *file, off_t ofs, uint8_t *upage,
         lock_acquire(&t->vm_thread_lock);
     }
 
-    // mark page lazy loaded
-    uint32_t *pte = lookup_page(t->pagedir, upage);
-    *pte = *pte | PAGE_LAZY_LOADED;
+    printf("marking page %p for lazy load\n", upage);
+    // mark page lazy loaded and not present
+    uint32_t *pte = lookup_page(t->pagedir, upage, true);
+    printf("pte : %p\n\n", pte);
+    printf("clearing page...\n");
+    *pte &= ~PTE_P;
+    *pte |= PAGE_LAZY_LOADED;
+    *pte |= PTE_U;
+    invalidate_pagedir (t->pagedir);
 
+    printf("marked!\n");
 
     // populate supplemental page dir
-    sup_page_dir_set(thread_current(),upage, pfh);
+    sup_page_dir_set(thread_current(), upage, pfh);
 
     // populate paged_file_segments list
+    printf("pushing back the page_file segment!\n");
     list_push_back(&proc_d->paged_file_segments, &pfh->elem);
+    printf("done with the push!\n");
 
     lock_release(&t->vm_thread_lock);
 

@@ -19,8 +19,8 @@ struct user_page_handle {
 	void *vaddr; //virtual address used
 };
 
-struct list user_page_list;
-struct lock user_page_list_lock;
+extern struct list user_page_list;
+extern struct lock user_page_list_lock;
 
 void user_page_list_alloc(void);
 void user_page_list_free(void);
