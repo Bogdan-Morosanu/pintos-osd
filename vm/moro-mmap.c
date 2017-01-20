@@ -14,6 +14,7 @@
 
 #include "devices/block.h"
 
+#include "userprog/commons-process.h"
 
 #ifdef SWAP_SECTORS_PER_PAGE
 #undef SWAP_SECTORS_PER_PAGE
@@ -25,9 +26,23 @@ void
 setup_mmap(struct file *f, void *v_addr)
 {
     uint32_t f_size = file_length(f);
-    uint32_t pages = (f_size % PGSIZE == 0) ? (f_size / PGSIZE) : (f_size / PGSIZE + 1);
+    uint32_t pages = f_size / PGSIZE;
 
+    int i = 0;
+    for (; i < pages; ++i) {
+        struct paged_file_handle *pfh = malloc(sizeof *pfh);
+        pfh->f = f;
+        pfh->type = PAGED_MMAP;
+        pfh->ofs = i * PGSIZE;
+        pfh->read_bytes = PGSIZE;
+        pfh->zero_bytes = 0;
+        pfh->upage = v_addr;
+    }
 
+    uint32_t rem = f_size % PGSIZE;
+    if (rem != 0) {
+
+    }
 }
 
 void
@@ -63,13 +78,13 @@ cleanup_mmap(struct thread *t)
     sema_down(&fs_sema);
     lock_acquire(&t->vm_thread_lock);
 
-    struct list_elem e;
+    struct list_elem *e;
     struct list *pfs = &t->pd->paged_file_segments;
     int removed = 0;
 
     for (e = list_begin(pfs); e != list_end(pfs); e = (removed) ? e : list_next(e)) {
 
-        struct paged_file_handle pfh = list_entry(e, struct paged_file_handle, elem);
+        struct paged_file_handle *pfh = list_entry(e, struct paged_file_handle, elem);
 
         if (PAGED_MMAP == pfh->type) {
             removed = 1;

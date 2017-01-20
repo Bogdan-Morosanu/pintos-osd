@@ -151,7 +151,7 @@ syscall_handler (struct intr_frame *f)
       sema_down(&fs_sema);
 
       struct user_file *uf = NULL;
-      struct list_elem e;
+      struct list_elem *e;
       struct list *opened_files = &thread_current()->pd->opened_files;
       for (e = list_begin(opened_files); e != list_end(opened_files); e = list_next(e)) {
 

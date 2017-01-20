@@ -39,8 +39,7 @@ enum paged_file_type { PAGED_ELF, PAGED_MMAP };
    user process if WRITABLE is true, read-only otherwise.
  *
 */
-bool setup_lazy_load (enum paged_file_type type,
-                      struct file *file, off_t ofs, uint8_t *upage,
+bool setup_lazy_load (struct file *file, off_t ofs, uint8_t *upage,
                       uint32_t read_bytes, uint32_t zero_bytes,
                       bool writable);
 

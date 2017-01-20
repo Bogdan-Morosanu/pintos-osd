@@ -18,6 +18,7 @@
 #include "threads/thread.h"
 
 #include "userprog/pagedir.h"
+#include "userprog/commons-process.h"
 
 #include "lib/kernel/list.h"
 
@@ -68,12 +69,12 @@ cleanup_lazy_load(struct thread *t)
 {
     lock_acquire(&t->vm_thread_lock);
 
-    struct list_elem e;
+    struct list_elem *e;
     struct list *pfs = &t->pd->paged_file_segments;
     int removed = 0;
     for (e = list_begin(pfs); e != list_end(pfs); e = (removed) ? e : list_next(e)) {
 
-        struct paged_file_handle pfh = list_entry(e, struct paged_file_handle, elem);
+        struct paged_file_handle *pfh = list_entry(e, struct paged_file_handle, elem);
 
         if (PAGED_ELF == pfh->type) {
             removed = 1;

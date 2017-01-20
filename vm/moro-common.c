@@ -16,6 +16,8 @@
 #include "threads/vaddr.h"
 #include "threads/palloc.h"
 
+#include "vm/carmina-frame.h"
+
 /* Taken from process.c -- non-lazy loading of file
  * Loads a segment starting at offset OFS in FILE at address
    UPAGE.  In total, READ_BYTES + ZERO_BYTES bytes of virtual
@@ -67,6 +69,11 @@ actually_load_segment (struct file *file, off_t ofs, uint8_t *upage,
             palloc_free_page (kpage);
             return false;
         }
+        struct user_page_handle *u;
+        u = malloc(sizeof(struct user_page_handle));
+        u->th = thread_current();
+        u->vaddr = upage;
+        list_push_back(&user_page_list, &u->elem);
 
         /* Advance. */
         read_bytes -= page_read_bytes;
@@ -103,10 +110,11 @@ bool setup_lazy_load (struct file *file, off_t ofs, uint8_t *upage,
 
     // mark page lazy loaded
     uint32_t *pte = lookup_page(t->pagedir, upage);
-    *pte = *pte & ~PAGE_LAZY_LOADED;
+    *pte = *pte | PAGE_LAZY_LOADED;
+
 
     // populate supplemental page dir
-    sup_page_dir_set(upage, pfh);
+    sup_page_dir_set(thread_current(),upage, pfh);
 
     // populate paged_file_segments list
     list_push_back(&proc_d->paged_file_segments, &pfh->elem);
