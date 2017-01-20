@@ -54,8 +54,7 @@ handle_mmap_load(struct thread *t, void *v_addr)
         lock_acquire(&t->vm_thread_lock);
     }
 
-    struct paged_file_handle *pfh =
-            *(struct paged_file_handle **)sup_page_dir_get(t, v_addr);
+    struct paged_file_handle *pfh = sup_page_dir_get(t, v_addr);
 
 
     actually_load_segment(pfh->f, pfh->ofs, pfh->upage,

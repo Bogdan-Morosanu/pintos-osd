@@ -10,6 +10,7 @@
 #include "common-vm.h"
 
 #include "userprog/commons-process.h"
+#include "userprog/pagedir.h"
 
 #include "threads/thread.h"
 #include "threads/synch.h"
@@ -38,6 +39,7 @@ bool
 actually_load_segment (struct file *file, off_t ofs, uint8_t *upage,
                        uint32_t read_bytes, uint32_t zero_bytes, bool writable)
 {
+    printf("file %p read_bytes, zero_bytes : %u, %u\n", file, read_bytes, zero_bytes);
     ASSERT ((read_bytes + zero_bytes) % PGSIZE == 0);
     ASSERT (pg_ofs (upage) == 0);
     ASSERT (ofs % PGSIZE == 0);
@@ -59,10 +61,12 @@ actually_load_segment (struct file *file, off_t ofs, uint8_t *upage,
         }
 
         /* Load this page. */
-        if (file_read (file, kpage, page_read_bytes) != (int) page_read_bytes)
+        printf("loading... from %p to %p %u", file, kpage, read_bytes);
+        size_t c = 0;
+        if ((c = file_read (file, kpage, page_read_bytes)) != (int) page_read_bytes)
         {
             palloc_free_page (kpage);
-            printf("read failed\n");
+            printf("read failed from %p (%u vs %u) \n", file, c, page_read_bytes);
             return false;
         }
         memset (kpage + page_read_bytes, 0, page_zero_bytes);
@@ -82,7 +86,7 @@ actually_load_segment (struct file *file, off_t ofs, uint8_t *upage,
         u->th = thread_current();
         u->vaddr = upage;
 
-        lock_acqure(&user_page_list_lock);
+        lock_acquire(&user_page_list_lock);
         list_push_back(&user_page_list, &u->elem);
         lock_release(&user_page_list_lock);
 
@@ -100,7 +104,8 @@ bool setup_lazy_load (struct file *file, off_t ofs, uint8_t *upage,
                       uint32_t read_bytes, uint32_t zero_bytes,
                       bool writable)
 {
-    printf("setting up page lazy load for %p\n", upage);
+    printf("\n\nsetting up page lazy load for %p from %p of  bytes %u and zero bytes %u\n",
+           upage, file, read_bytes, zero_bytes);
     struct thread *t = thread_current();
     struct proc_desc *proc_d = t->pd;
     ASSERT(proc_d);
@@ -135,6 +140,10 @@ bool setup_lazy_load (struct file *file, off_t ofs, uint8_t *upage,
 
     // populate supplemental page dir
     sup_page_dir_set(thread_current(), upage, pfh);
+
+    uint32_t *pte_addr = lookup_page(thread_current()->sup_pagedir, upage, false);
+    printf("on the other side... %p\n", *pte_addr);
+    ASSERT (*pte_addr == pfh);
 
     // populate paged_file_segments list
     printf("pushing back the page_file segment!\n");

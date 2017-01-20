@@ -56,6 +56,7 @@ pagedir_destroy (uint32_t *pd)
 uint32_t *
 lookup_page (uint32_t *pd, const void *vaddr, bool create)
 {
+  printf("looking up %p in %p\n", vaddr, pd);
   uint32_t *pt, *pde;
 
   ASSERT (pd != NULL);
@@ -83,7 +84,7 @@ lookup_page (uint32_t *pd, const void *vaddr, bool create)
 
   /* Return the page table entry. */
   pt = pde_get_pt (*pde);
-      return &pt[pt_no (vaddr)];
+  return &pt[pt_no (vaddr)];
 }
 
 /* Adds a mapping in page directory PD from user virtual page

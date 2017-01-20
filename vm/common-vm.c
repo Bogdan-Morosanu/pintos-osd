@@ -17,7 +17,7 @@
 
 #include "threads/pte.h"
 #include "threads/vaddr.h"
-
+#include "filesys/filesys.h"
 
 #define PGELEMS (PGSIZE / (sizeof(uint32_t)))
 

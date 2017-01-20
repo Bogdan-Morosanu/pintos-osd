@@ -40,6 +40,7 @@ void sup_page_dir_set(struct thread *t, void *v_addr, uint32_t val)
 
     // 3rd arg == true : map extra tables on set
     uint32_t *pte_addr = lookup_page(t->sup_pagedir, v_addr, true);
+    printf("sup page dir set %p @ %p\n", val, pte_addr);
     *pte_addr = val;
 
 }

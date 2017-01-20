@@ -163,7 +163,7 @@ page_fault (struct intr_frame *f)
 
   uint32_t *pte = lookup_page(th_cnt->pagedir, fault_addr, false);
   if (pte && IS_NOT_HOPELESS(*pte)) {
-      printf("[page_fault] decided page is not hopeless!\n");
+      printf("\n\n[page_fault] decided page is not hopeless!\n");
       load_page(fault_addr);
       return;
 

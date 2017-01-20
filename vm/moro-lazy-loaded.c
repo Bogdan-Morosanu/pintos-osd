@@ -33,13 +33,18 @@ handle_lazy_load(struct thread *t, void *v_addr)
 {
     ASSERT(thread_current() == t->vm_thread_lock.holder);
 
-    struct paged_file_handle *pfh =
-            *(struct paged_file_handle **)sup_page_dir_get(t, v_addr);
+    struct paged_file_handle *pfh = sup_page_dir_get(t, v_addr);
 
-
+    printf("from %p found pfh %p\n", v_addr, pfh);
     actually_load_segment(pfh->f, pfh->ofs, pfh->upage,
                           pfh->read_bytes, pfh->zero_bytes,
                           pfh->writable);
+
+
+    uint32_t *pte = lookup_page(thread_current()->sup_pagedir, v_addr, false);
+    ASSERT(pte != NULL);
+    *pte |= PTE_P;
+    ASSERT(*pte & PTE_P);
 
     printf("load returned!!\n");
 }
