@@ -14,6 +14,7 @@
 #include "threads/synch.h"
 #include "vm/carmina-swap.h"
 
+#include "common-vm.h"
 
 void user_page_list_alloc(void)
 {

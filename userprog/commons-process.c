@@ -42,6 +42,8 @@ new_proc_desc(const char *command_line)
     list_init(&pd->opened_files);
     pd->next_file_id = 2; // (leave room for STDIN and STDOUT, no STDERR in pintos)
 
+    list_init(&pd->paged_file_segments);
+
     return pd;
 }
 

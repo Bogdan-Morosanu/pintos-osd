@@ -10,6 +10,9 @@ int process_wait (tid_t);
 void process_exit (int);
 void process_activate (void);
 
+bool install_page (void *upage, void *kpage, bool writable);
+
+
 extern struct list GLOBAL_PROCESSES;
 
 #endif /* userprog/process.h */

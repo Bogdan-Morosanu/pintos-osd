@@ -124,8 +124,8 @@ struct thread
 
     /* Owned by common-sup-pd.c */
     uint32_t *sup_pagedir;
-    struct lock pd_lock;
-
+    /* acquire this before doing any kind of VM operation! */
+    struct lock vm_thread_lock;
   };
 
 /* If false (default), use round-robin scheduler.

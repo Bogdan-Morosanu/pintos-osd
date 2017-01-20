@@ -12,21 +12,18 @@
 
 #include "moro-common.h"
 
-/// allocates and populates paged_file_handle
-/// at process creation
-struct paged_file_handle *
-setup_lazy_load(struct file *f);
+struct thread;
 
 /// loads the lazy loaded page described by page
 /// table entries passed in .
 /// called by load_page .
 void
-handle_lazy_load(uint32_t * pte , uint32_t * sup_pte);
+handle_lazy_load(struct thread *t, void *v_addr);
 
 /// handles eviction of lazy loaded page at
 /// page table and suplemental page table entries passed in .
 void
-handle_lazy_load_evict(uint32_t * pte, uint32_t *sup_pte);
+handle_lazy_load_evict(struct thread *t, void *v_addr);
 
 /// releases memory allocated , ( for paged_file_handle )
 /// and page inside user_page_list

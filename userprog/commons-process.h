@@ -48,7 +48,7 @@ struct proc_desc {
 
 	int next_file_id;				// keeps the next file descriptor that is available
 
-	struct paged_file_handle *elf_handle;  // populated for lazy loading
+	struct list paged_file_segments; // VM mmapped and lazy loaded segments
 };
 
 /// @brief returns new process descriptor with parent set as
